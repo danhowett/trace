@@ -56,7 +56,7 @@ That's it. There is nothing to install and no account to create.
 
 ## The sample case
 
-`trace-sample-case.json` is a comprehensive, realistic worked example: a **BlackCat/ALPHV ransomware incident** on a finance file server (`IR-2026-014`). It is designed to exercise every feature of the system, so it is useful both for evaluating TRACE and for training.
+`trace-sample-case.json` is a comprehensive, realistic worked example: a **ransomware incident** on a finance file server (`IR-2026-014`). It is designed to exercise every feature of the system, so it is useful both for evaluating TRACE and for training.
 
 **To load it:** open TRACE, click **Load file** in the sidebar, and select `trace-sample-case.json`.
 
