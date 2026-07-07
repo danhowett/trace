@@ -226,4 +226,12 @@ Chrome or Edge for the full experience (including workspace auto-save). Others w
 
 ## Disclaimer
 
-TRACE is a case-management and record-keeping aid. It does not provide legal advice. Regulatory notification deadlines and obligations shown in the tool are aids to tracking and must be verified against the applicable regulations and your organisation's legal counsel for any real incident. You are responsible for the security and handling of the case data you enter and export.
+TRACE is a case-management and record-keeping aid. It does not provide legal advice. Regulatory notification deadlines and obligations shown in the tool are aids to tracking and must be verified against the applicable regulations and your organisation's legal counsel for any real incident. You are responsible for the security and handling of the case data you enter and export.  
+
+### No warranty & data-loss disclaimer
+
+TRACE is provided **"as is", without warranty of any kind**, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement. You use it entirely at your own risk.
+
+Because TRACE stores data in your browser and in local files that **you** are responsible for managing, **the authors and contributors accept no liability for any loss, corruption, or inaccessibility of your data** — however it occurs, including (but not limited to) browser storage being cleared, a lost or overwritten workspace file, a browser or system crash, an unsaved session, a failed import or merge, or user error. There is no server-side backup and no way for anyone to recover data on your behalf.
+
+**You are solely responsible for backing up your case data.** Export regularly using **Save to file**, keep copies of your workspace `.json` files in secure, backed-up storage, and do not rely on browser storage as your only copy. In no event shall the authors or contributors be liable for any direct, indirect, incidental, or consequential damages arising from the use of this software or the loss of any data created with it.
