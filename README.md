@@ -194,7 +194,7 @@ Everything else — all tabs, exports, themes, merge, and the sample case — wo
 
 | File | Description |
 |---|---|
-| `ir-cms.html` | The complete application — a single self-contained HTML file. This is all you need to run TRACE. |
+| `TRACE-CMS.html` | The complete application — a single self-contained HTML file. This is all you need to run TRACE. |
 | `trace-sample-case.json` | A comprehensive worked example (ransomware incident) to load and explore. |
 | `README.md` | This guide. |
 
