@@ -205,7 +205,7 @@ The application is a single file with no build step and no external dependencies
 ## FAQ
 
 **Do I need to install anything or run a server?**
-No. Open `ir-cms.html` in a browser and you're running.
+No. Open `TRACE-CMS.html` in a browser and you're running.
 
 **Is my data sent anywhere?**
 No. Everything stays in your browser and, if you connect a workspace, in a file on your own disk.
