@@ -129,6 +129,8 @@ A one-time snapshot export you trigger manually — useful for handing someone a
 
 **In short:** use **Connect workspace** for day-to-day durability; use **Save to file** for snapshots and sharing.
 
+> **Note on workspace auto-save:** The **Connect workspace** feature — which links TRACE to a file on your disk and saves to it automatically on every change — relies on the browser's [File System Access API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API), which is currently only supported in **Chromium-based browsers (Google Chrome, Microsoft Edge, Opera, Brave)**. In Firefox and Safari this option is hidden, but TRACE still works fully: your data is saved to browser storage automatically, and you can persist cases manually using **Save to file** and reload them with **Load file**. For the most durable setup, use Chrome or Edge.
+
 ---
 
 ## Working as a team
