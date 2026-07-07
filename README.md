@@ -43,7 +43,7 @@ It captures the artefacts that matter for a defensible investigation — evidenc
 
 ## Quick start
 
-1. **Download** `ir-cms.html`.
+1. **Download** `TRACE-CMS.html`.
 2. **Open it** in a modern browser (Chrome or Edge recommended — see [Browser support](#browser-support)).
 3. Click **New case** and complete the short intake wizard, **or** load the [sample case](#the-sample-case) to explore a fully worked example.
 4. Click **? Guide** (top right) at any time for an in-app walkthrough.
