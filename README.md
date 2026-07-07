@@ -235,3 +235,9 @@ TRACE is provided **"as is", without warranty of any kind**, express or implied,
 Because TRACE stores data in your browser and in local files that **you** are responsible for managing, **the authors and contributors accept no liability for any loss, corruption, or inaccessibility of your data** — however it occurs, including (but not limited to) browser storage being cleared, a lost or overwritten workspace file, a browser or system crash, an unsaved session, a failed import or merge, or user error. There is no server-side backup and no way for anyone to recover data on your behalf.
 
 **You are solely responsible for backing up your case data.** Export regularly using **Save to file**, keep copies of your workspace `.json` files in secure, backed-up storage, and do not rely on browser storage as your only copy. In no event shall the authors or contributors be liable for any direct, indirect, incidental, or consequential damages arising from the use of this software or the loss of any data created with it.
+
+---
+
+## Usage & distribution
+
+TRACE is free to use and free to share. You may download, use, copy, and distribute it at no charge, including within your organisation and to others, provided it remains **free of charge** and this notice and the accompanying disclaimers are kept intact. You may **not sell, resell, license for a fee, or otherwise commercialise** TRACE or any substantially unmodified version of it, whether on its own or bundled as part of a paid product or service. If you share it, share it freely.
