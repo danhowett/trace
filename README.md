@@ -86,7 +86,7 @@ TRACE is organised into tabs, aligned to the phases of an incident.
 
 **Custody** — chain-of-custody entries linked to evidence items, recording each handling event (acquired, transferred, analysed, returned) for a defensible audit trail.
 
-**IOCs** — indicators of compromise with inline **MITRE ATT&CK** technique lookup (search by what you observed — e.g. "powershell", "lsass", "scheduled task"- no need to remember every MITRE ATT&CK tactic). Each IOC records an **observed-at** time (when it was seen, distinct from when it was logged) so the timeline reflects reality. IOCs can be viewed as a flat list or grouped **by host**.
+**IOCs** — indicators of compromise with inline **MITRE ATT&CK** technique lookup (search by what you observed — e.g. "powershell", "lsass", "scheduled task"- no need to remember every ATT&CK tactic). Each IOC records an **observed-at** time (when it was seen, distinct from when it was logged) so the timeline reflects reality. IOCs can be viewed as a flat list or grouped **by host**.
 
 **Actions** — response tasks with owner, priority, due date, and status. Supports **recurring** actions (e.g. twice-daily briefings) with per-instance completion tracking.
 
