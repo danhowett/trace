@@ -1,6 +1,6 @@
 # TRACE — Threat Response & Case Evidence System
 
-A single-file, offline-first incident response case management system for DFIR and cyber threat intelligence work. Everything runs in your browser — no server, no install, no data leaving your machine.
+A single-file, offline-first incident response case management system for DFIR. Everything runs in your browser — no server, no install, no data leaving your machine.
 
 TRACE helps incident responders manage the full lifecycle of a security incident: evidence and chain of custody, indicators of compromise with MITRE ATT&CK tagging, response actions, regulatory notifications, an accurate incident timeline, and structured closure — all aligned to the NIST incident response lifecycle.
 
