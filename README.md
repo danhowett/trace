@@ -162,7 +162,7 @@ TRACE exports case data in the formats downstream tools expect. Export buttons a
 | **STIX 2.1** | JSON bundle | Share indicators and observed data with threat-intel platforms |
 | **ATT&CK Navigator** | Navigator layer JSON | Visualise tagged techniques on the MITRE ATT&CK matrix (current ATT&CK version) |
 | **CSV** | Single spreadsheet | All artefacts (evidence, custody, IOCs, actions, escalations, notifications, root causes) flattened into one CSV for spreadsheets or SIEM import |
-| **Report** | Printable HTML | A formatted incident report for stakeholders |
+| **Report** | Printable HTML | A formatted incident report for stakeholders, with custom options for selecting only the sections you wish to export |
 | **JSON** | TRACE workspace | Full-fidelity backup, sharing, and the basis for the merge workflow |
 
 The CSV export uses proper quoting/escaping and a UTF-8 byte-order mark so it opens cleanly in Excel. The ATT&CK Navigator layer and STIX exports use standard STIX tactic shortnames so techniques land in the correct columns.
