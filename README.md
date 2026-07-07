@@ -4,7 +4,8 @@ A single-file, offline-first incident response case management system for DFIR a
 
 TRACE helps incident responders manage the full lifecycle of a security incident: evidence and chain of custody, indicators of compromise with MITRE ATT&CK tagging, response actions, regulatory notifications, an accurate incident timeline, and structured closure — all aligned to the NIST incident response lifecycle.
 
-![TRACE dashboard](docs/trace-dashboard.png)
+![TRACE dashboard](docs/screenshot-dashboard.png)
+
 ---
 
 ## Contents
