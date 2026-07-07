@@ -1,0 +1,110 @@
+{
+  "cases": {
+    "sample-case-ransomware-001": {
+      "meta": {
+        "id": "IR-2026-014",
+        "title": "Ransomware — Finance file server (BlackCat/ALPHV)",
+        "severity": "critical",
+        "status": "in-progress",
+        "owner": "Priya Sharma",
+        "detectedAt": "2026-06-28T06:42",
+        "reportedAt": "2026-06-28T07:05",
+        "containedAt": "2026-06-28T11:20",
+        "resolvedAt": "",
+        "classification": "Ransomware",
+        "narrative": "At approximately 06:42 on 28 June, the SOC received multiple EDR alerts for mass file encryption activity on FIN-SRV-02, the primary finance file server. Ransom notes (RECOVER-FILES.txt) were dropped across accessible shares. Initial triage indicates BlackCat/ALPHV tradecraft. Entry vector appears to be a compromised VPN account (no MFA) belonging to a contractor, first used from an anomalous ASN at 02:14. Lateral movement to FIN-SRV-02 followed via RDP using harvested domain credentials. Approximately 340GB of finance data was staged and exfiltrated to an external host prior to encryption. Containment achieved by 11:20 through network isolation of affected segment and disabling of the compromised accounts.",
+        "systems": "",
+        "containment": ""
+      },
+      "govern": {
+        "assets": "FIN-SRV-02 (finance file server), FIN-SRV-01 (finance app server), VPN concentrator, DC-01 (domain controller — credential exposure suspected)",
+        "criticality": "Tier 1 — business critical",
+        "dataClass": "personal data (GDPR)",
+        "dataTypes": "Employee PII, payroll records, supplier bank details, financial statements",
+        "regs": "UK GDPR / DPA 2018, NIS2 (EU) 2022/2555",
+        "notifDeadline": "2026-07-01T06:42",
+        "deadlineBasis": "Earliest regulatory obligation",
+        "legalNotes": "Privilege asserted over IR investigation via external counsel. Do not circulate technical findings outside the response team without legal review.",
+        "commander": "Marcus Webb (CISO)",
+        "legal": "Eleanor Voss (General Counsel)",
+        "dpo": "Raj Patel (DPO)",
+        "sponsor": "Fiona Grant (COO)",
+        "comms": "Tom Reilly (Head of Comms)",
+        "externalIR": "Mandiant — retainer #MR-4471",
+        "secureComms": "Signal group 'IR-014 Bridge'; encrypted email list ir014@",
+        "bizImpact": "Finance operations halted ~2 days. Payroll run at risk. Estimated direct cost £180k-£240k including IR retainer, overtime, and restoration.",
+        "repRisk": "High — supplier bank details exposed; potential media interest if data surfaces on leak site.",
+        "insurance": "Cyber policy CYB-88213 (Beazley). Notified 28 June. Excess £50k.",
+        "riskNotes": "Threat actor has a known data-leak site. 72h countdown on ransom note before threatened publication."
+      },
+      "evidence": [
+        {"id":"ev-001","name":"FIN-SRV-02 full disk image (E01)","type":"disk-image","hash":"a3f5c9e21b7d4408e6f1c2a9d8b3e4f50172c9ab6de3f7018c4b2a5d9e6f1023","source":"FIN-SRV-02","collectedBy":"Priya Sharma","collectedAt":"2026-06-28T12:30","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T12:35:00.000Z"},
+        {"id":"ev-002","name":"FIN-SRV-02 memory capture (raw)","type":"memory-dump","hash":"7c1e9b04a2f8d6350197e3c8b5a4f2016d9c7e3a1b8f4d20539a6c1e8b7d4f09","source":"FIN-SRV-02","collectedBy":"Priya Sharma","collectedAt":"2026-06-28T09:15","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T12:40:00.000Z"},
+        {"id":"ev-003","name":"VPN concentrator auth logs (28 Jun)","type":"log-file","hash":"2b8f4d19c6a3e70581f9b2d4c7e6a301594c8b7a2e9f6d40318b5a9c2e7f4d16","source":"VPN concentrator","collectedBy":"Dan Howett","collectedAt":"2026-06-28T13:10","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-06-28T13:15:00.000Z"},
+        {"id":"ev-004","name":"RECOVER-FILES.txt ransom note","type":"file","hash":"9e3c7a15b8d24069f1a3c6e8b7d5f40263a9c8b1e4f7d6053a2b9c8e1f6d4a70","source":"FIN-SRV-02 (C:\\Shares\\Finance)","collectedBy":"Priya Sharma","collectedAt":"2026-06-28T08:50","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T13:20:00.000Z"},
+        {"id":"ev-005","name":"Firewall netflow export (27-28 Jun)","type":"log-file","hash":"5d1a8c37f9b6e20493c7a5b8d4e6f1027a8c9b3e6d5f4a10829b7c6e3f9d4a52","source":"Perimeter firewall","collectedBy":"Dan Howett","collectedAt":"2026-06-28T14:00","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-06-28T14:05:00.000Z"}
+      ],
+      "custody": [
+        {"id":"coc-001","evidenceId":"ev-001","handledBy":"Priya Sharma","action":"acquired","timestamp":"2026-06-28T12:30","notes":"Imaged with Tableau write-blocker; hash verified against source.","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T12:36:00.000Z"},
+        {"id":"coc-002","evidenceId":"ev-001","handledBy":"Priya Sharma","action":"transferred","timestamp":"2026-06-28T18:00","notes":"Copied to evidence NAS (encrypted). Original image sealed in evidence locker E-14.","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T18:05:00.000Z"},
+        {"id":"coc-003","evidenceId":"ev-002","handledBy":"Priya Sharma","action":"acquired","timestamp":"2026-06-28T09:15","notes":"Captured with WinPMEM prior to isolation to preserve volatile artefacts.","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T12:42:00.000Z"},
+        {"id":"coc-004","evidenceId":"ev-001","handledBy":"Mandiant analyst (J. Okafor)","action":"analysed","timestamp":"2026-06-29T10:00","notes":"Handed working copy to external IR for malware analysis under NDA/privilege.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-06-29T10:05:00.000Z"}
+      ],
+      "iocs": [
+        {"id":"ioc-001","type":"ipv4","hashAlgo":"","otherLabel":"","value":"185.220.101.47","confidence":95,"mitreId":"T1133","mitreTactic":"initial-access","source":"VPN concentrator","observedAt":"2026-06-28T02:14","notes":"Source IP of anomalous VPN login on contractor account (no MFA). Known Tor exit / hosting ASN.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-06-28T13:30:00.000Z"},
+        {"id":"ioc-002","type":"account","hashAlgo":"","otherLabel":"","value":"svc-contractor01","confidence":90,"mitreId":"T1078","mitreTactic":"initial-access","source":"VPN concentrator","observedAt":"2026-06-28T02:14","notes":"Compromised contractor VPN account used for initial access. Valid credentials, no MFA enforced.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-06-28T13:34:00.000Z"},
+        {"id":"ioc-003","type":"hash","hashAlgo":"SHA-256","otherLabel":"","value":"c8e5a71f9b3d4602a8f1c6e9b7d5a40382c9b7e6a1f4d70518a3b9c6e2f8d4a15","confidence":95,"mitreId":"T1486","mitreTactic":"impact","source":"FIN-SRV-02","observedAt":"2026-06-28T06:40","notes":"BlackCat/ALPHV encryptor binary (bcrypt.exe). Matches known ALPHV sample family.","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T14:00:00.000Z"},
+        {"id":"ioc-004","type":"ipv4","hashAlgo":"","otherLabel":"","value":"91.223.16.88","confidence":85,"mitreId":"T1567","mitreTactic":"exfiltration","source":"Perimeter firewall","observedAt":"2026-06-28T04:55","notes":"External host receiving ~340GB outbound over HTTPS prior to encryption. Data staging/exfil endpoint.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-06-28T14:10:00.000Z"},
+        {"id":"ioc-005","type":"domain","hashAlgo":"","otherLabel":"","value":"filetransfer-eu.workspace-sync.net","confidence":80,"mitreId":"T1071","mitreTactic":"command-and-control","source":"DNS logs","observedAt":"2026-06-28T03:30","notes":"C2 / exfil staging domain resolved by FIN-SRV-02. Registered 3 days before incident.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-06-28T14:20:00.000Z"},
+        {"id":"ioc-006","type":"filename","hashAlgo":"","otherLabel":"","value":"RECOVER-FILES.txt","confidence":100,"mitreId":"T1486","mitreTactic":"impact","source":"FIN-SRV-02","observedAt":"2026-06-28T06:48","notes":"Ransom note dropped in every encrypted directory. Contains .onion leak-site URL and 72h deadline.","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T14:25:00.000Z"},
+        {"id":"ioc-007","type":"hash","hashAlgo":"SHA-1","otherLabel":"","value":"5b7a2c9e4f1d8036a5c2b9e7d4f6a10385b2c9e7","confidence":75,"mitreId":"T1003","mitreTactic":"credential-access","source":"FIN-SRV-02","observedAt":"2026-06-28T03:05","notes":"Suspected credential-dumping tool (Mimikatz-like). Detected in memory capture.","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T14:35:00.000Z"}
+      ],
+      "actions": [
+        {"id":"act-001","title":"Isolate FIN-SRV-02 and affected finance segment","owner":"Dan Howett","priority":"high","due":"2026-06-28T09:00","status":"done","notes":"Network isolation applied at switch. Segment VLAN quarantined.","createdAt":"2026-06-28T07:10:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T07:10:00.000Z"},
+        {"id":"act-002","title":"Disable compromised accounts (svc-contractor01 + reset exposed domain creds)","owner":"IT Ops","priority":"high","due":"2026-06-28T10:00","status":"done","notes":"Contractor account disabled; forced reset of 40 potentially exposed domain accounts.","createdAt":"2026-06-28T07:15:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T07:15:00.000Z"},
+        {"id":"act-003","title":"Rebuild FIN-SRV-02 from clean backup and validate","owner":"IT Ops","priority":"high","due":"2026-06-30T17:00","status":"in-progress","notes":"Restoring from 26 June backup (pre-compromise). Validation checklist to follow before return to prod.","createdAt":"2026-06-28T15:00:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-06-28T15:00:00.000Z"},
+        {"id":"act-004","title":"Enforce MFA on all VPN accounts (close entry vector)","owner":"IT Ops","priority":"high","due":"2026-06-29T12:00","status":"done","notes":"MFA now mandatory on VPN. Contractor access policy under review.","createdAt":"2026-06-28T16:00:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T16:00:00.000Z"},
+        {"id":"act-005","title":"Twice-daily executive situation briefing","owner":"Marcus Webb","priority":"medium","due":"2026-06-28T09:00","status":"open","notes":"Ongoing while incident is live. 09:00 and 16:00.","createdAt":"2026-06-28T08:00:00.000Z","recur":"twice-daily","recurEnd":"2026-07-02T17:00","recurHours":"","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-06-28T08:00:00.000Z"},
+        {"id":"act-006","title":"Monitor threat-actor leak site for data publication","owner":"CTI team","priority":"medium","due":"2026-06-28T12:00","status":"open","notes":"Check .onion leak site daily for signs of exfiltrated data being posted.","createdAt":"2026-06-28T11:00:00.000Z","recur":"daily","recurEnd":"2026-07-15T12:00","recurHours":"","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-06-28T11:00:00.000Z"}
+      ],
+      "escalations": [
+        {"id":"esc-001","from":"high","to":"critical","changedBy":"Marcus Webb","timestamp":"2026-06-28T07:30","reason":"Confirmed data exfiltration (~340GB finance data incl. PII) prior to encryption — elevates from high to critical given regulatory and reputational exposure."}
+      ],
+      "notifications": [
+        {"id":"notif-001","recipient":"ICO","type":"regulator","channel":"written-report","deadline":"2026-07-01T06:42","basis":"Art. 33 UK GDPR — 72h from awareness of breach","notes":"Personal data breach affecting employee and supplier PII. Initial notification filed.","sent":true,"sentAt":"2026-06-29T14:20:00.000Z"},
+        {"id":"notif-002","recipient":"National CSIRT / Authority","type":"regulator","channel":"written-report","deadline":"2026-06-29T06:42","basis":"Art. 23 NIS2 — early warning within 24h","notes":"Early warning submitted within 24h window.","sent":true,"sentAt":"2026-06-28T22:10:00.000Z"},
+        {"id":"notif-003","recipient":"CISO / Executive team","type":"internal-management","channel":"phone","deadline":"2026-06-28T08:42","basis":"Internal IR policy — immediate escalation","notes":"Verbal briefing at 07:20, formal escalation follow-up.","sent":true,"sentAt":"2026-06-28T07:20:00.000Z"},
+        {"id":"notif-004","recipient":"General counsel","type":"legal-counsel","channel":"phone","deadline":"2026-06-28T10:42","basis":"Preserve legal privilege — notify before external comms","notes":"Privilege asserted over investigation.","sent":true,"sentAt":"2026-06-28T08:05:00.000Z"},
+        {"id":"notif-005","recipient":"Cyber insurer (Beazley)","type":"insurance","channel":"email","deadline":"2026-06-29T06:42","basis":"Policy obligation — notify within 24h of major incident","notes":"Claim reference CYB-88213 opened. Mandiant engaged via panel.","sent":true,"sentAt":"2026-06-28T16:45:00.000Z"},
+        {"id":"notif-006","recipient":"Affected suppliers (bank detail exposure)","type":"internal-management","channel":"email","deadline":"2026-07-05T06:42","basis":"Duty to inform affected parties","notes":"Pending legal sign-off on wording before sending.","sent":false,"sentAt":null}
+      ],
+      "rootCauses": [
+        {"id":"rc-001","factor":"VPN account without MFA","type":"Technical","detail":"Contractor VPN account permitted single-factor authentication, allowing use of stolen credentials from an anomalous location.","remediation":"MFA now enforced on all remote access. Contractor accounts moved to time-boxed, MFA-mandatory access with quarterly review."},
+        {"id":"rc-002","factor":"Flat network permitted lateral movement","type":"Technical","detail":"Once on the VPN segment, RDP to the finance server was unrestricted, enabling rapid lateral movement with harvested credentials.","remediation":"Network segmentation project prioritised; RDP restricted to jump hosts with MFA and logging."},
+        {"id":"rc-003","factor":"Delayed detection of exfiltration","type":"Process","detail":"Large outbound transfer (~340GB) was not alerted on in near-real-time; discovered during post-incident netflow review.","remediation":"DLP egress monitoring and volume-based alerting to be implemented on perimeter."}
+      ],
+      "recurCompleted": {
+        "act-005:2026-06-28T09:00": true,
+        "act-005:2026-06-28T16:00": true,
+        "act-005:2026-06-29T09:00": true,
+        "act-006:2026-06-28T12:00": true,
+        "act-006:2026-06-29T12:00": true
+      },
+      "closure": {
+        "checks": {
+          "cl1": true, "cl2": true, "cl3": true,
+          "cl4": true, "cl5": true, "cl6": true,
+          "cl8": true, "cl14": true
+        },
+        "notes": {
+          "cl10": "Rebuild in progress on FIN-SRV-02 — see action act-003.",
+          "cl7": "Disk image and memory capture sealed in evidence locker E-14; working copies encrypted on evidence NAS."
+        }
+      },
+      "lessons": {},
+      "exec": {}
+    }
+  },
+  "activeCaseId": "sample-case-ransomware-001",
+  "activeTab": "dashboard"
+}
