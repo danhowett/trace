@@ -1,0 +1,137 @@
+{
+  "cases": {
+    "sample-case-bec-002": {
+      "meta": {
+        "id": "IR-2026-009",
+        "title": "Business email compromise — supplier payment diversion",
+        "severity": "high",
+        "status": "closed",
+        "owner": "Dan Howett",
+        "detectedAt": "2026-05-14T15:20",
+        "reportedAt": "2026-05-14T15:55",
+        "containedAt": "2026-05-14T18:40",
+        "resolvedAt": "2026-05-22T16:00",
+        "classification": "Business email compromise (BEC)",
+        "narrative": "On 14 May at 15:20, an Accounts Payable clerk queried an unusual bank-detail change request with the Finance Manager, who escalated to the SOC. Investigation established that the mailbox of a Procurement Officer (j.mensah@) had been accessed by an unauthorised party since at least 28 April, following a credential-harvesting phishing email that bypassed filtering. The actor maintained quiet persistence for roughly 16 days: reading correspondence, creating an inbox rule to auto-file and mark-as-read any message containing supplier or invoice keywords, and studying the organisation's payment cycle. On 12 May the actor sent a spoofed bank-detail change request to Accounts Payable from the legitimate compromised mailbox, and a payment of GBP 84,500 was made to the fraudulent account on 13 May. The dwell time before detection was approximately 16 days. There is no evidence of lateral movement beyond the single mailbox, no malware was deployed, and no bulk data exfiltration was identified. Containment was achieved on 14 May by revoking sessions, forcing a credential reset, removing the malicious inbox rule and revoking an OAuth token the actor had consented. GBP 84,500 was subject to an indemnity claim; GBP 61,200 was successfully recalled by the receiving bank on 20 May, leaving a net loss of GBP 23,300. Case formally closed 22 May following the lessons-learned session.",
+        "systems": "Microsoft 365 mailbox (j.mensah@), Accounts Payable workflow, supplier master data",
+        "containment": "Sessions revoked and password reset on compromised account; MFA re-registered; malicious inbox rule deleted and preserved as evidence; third-party OAuth grant revoked; payment recall initiated with bank; supplier bank-detail change process frozen pending verbal callback verification."
+      },
+      "govern": {
+        "assets": "M365 tenant (single mailbox compromised), Accounts Payable process, supplier master data",
+        "criticality": "Tier 2 — important",
+        "dataClass": "personal data (GDPR) + commercial confidential",
+        "dataTypes": "Supplier contact details, invoice and payment correspondence, limited employee PII within mailbox",
+        "regs": "UK GDPR / DPA 2018",
+        "notifDeadline": "2026-05-17T15:20",
+        "deadlineBasis": "Earliest regulatory obligation",
+        "legalNotes": "Assessed under Art. 33(1) as unlikely to result in high risk to data subjects; documented risk assessment retained in lieu of ICO notification. Decision reviewed and signed off by DPO and General Counsel on 16 May.",
+        "commander": "Marcus Webb (CISO)",
+        "legal": "Eleanor Voss (General Counsel)",
+        "dpo": "Raj Patel (DPO)",
+        "sponsor": "Fiona Grant (COO)",
+        "comms": "Not engaged — no external communication required",
+        "externalIR": "Not engaged — handled in-house",
+        "secureComms": "Standard corporate channels; case notes restricted to IR group",
+        "bizImpact": "Net financial loss GBP 23,300 after partial recall of GBP 61,200. Accounts Payable process paused for 2 days pending control change. No operational outage.",
+        "repRisk": "Low — contained to a single supplier relationship; supplier notified directly and relationship retained.",
+        "insurance": "Cyber policy CYB-88213 (Beazley). Crime/social-engineering section engaged; claim CRM-2026-0412 for residual GBP 23,300.",
+        "riskNotes": "Primary residual risk is repeat attempts against other finance staff using knowledge gained from 16 days of mailbox access. Targeted awareness briefing delivered to AP and Procurement teams."
+      },
+      "evidence": [
+        {"id":"ev-b01","name":"Unified Audit Log export — j.mensah@ (28 Apr – 14 May)","type":"log-file","hash":"4f8b2d61a9c73e05182d6b4f9e7a3c50861d9f2b7c4e8a10395f6d2b8c1e7a43","source":"Microsoft 365 tenant","collectedBy":"Dan Howett","collectedAt":"2026-05-14T17:05","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T17:10:00.000Z"},
+        {"id":"ev-b02","name":"Malicious inbox rule export (JSON)","type":"file","hash":"b71e4c9a2f6d38051a7c4e9b2d6f8a30574e1c9b6a3f7d20418c5b9e2a7f6d31","source":"j.mensah@ mailbox","collectedBy":"Dan Howett","collectedAt":"2026-05-14T17:30","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T17:35:00.000Z"},
+        {"id":"ev-b03","name":"Original phishing email (.msg with headers)","type":"file","hash":"e29a7c14b8f6d3057c1e9a4b2f8d6035914b7e2c6a9f3d10528b6c4e1a9f7d52","source":"j.mensah@ mailbox (recovered)","collectedBy":"Priya Sharma","collectedAt":"2026-05-15T09:20","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-05-15T09:25:00.000Z"},
+        {"id":"ev-b04","name":"Fraudulent bank-detail change request email thread","type":"file","hash":"7a3d8e15c4b9f2061e8a5c3d7b4f9026153c8a7e4b2f6d10639a5c8e3f1b7d64","source":"Accounts Payable mailbox","collectedBy":"Priya Sharma","collectedAt":"2026-05-15T10:00","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-05-15T10:05:00.000Z"},
+        {"id":"ev-b05","name":"Azure AD sign-in log export (risky sign-ins)","type":"log-file","hash":"1c6f9a24d7b3e8052f9c1a6d4b8e7035264a9d1f7c3e6b20745f8a2c9e4b1d76","source":"Entra ID / Azure AD","collectedBy":"Dan Howett","collectedAt":"2026-05-14T17:50","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T17:55:00.000Z"},
+        {"id":"ev-b06","name":"OAuth application consent grant record","type":"log-file","hash":"9d4b7e12a6c8f3057b2e9d4a1c6f8035478b2e6d9a4c7f10852c6b9e1d3a7f48","source":"Entra ID enterprise applications","collectedBy":"Dan Howett","collectedAt":"2026-05-14T18:15","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T18:20:00.000Z"}
+      ],
+      "custody": [
+        {"id":"coc-b01","evidenceId":"ev-b01","handledBy":"Dan Howett","action":"acquired","timestamp":"2026-05-14T17:05","notes":"Exported via Purview audit search; date range 28 Apr – 14 May; SHA-256 computed on export.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T17:12:00.000Z"},
+        {"id":"coc-b02","evidenceId":"ev-b02","handledBy":"Dan Howett","action":"acquired","timestamp":"2026-05-14T17:30","notes":"Rule exported to JSON before deletion so the configuration is preserved as evidence.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T17:38:00.000Z"},
+        {"id":"coc-b03","evidenceId":"ev-b03","handledBy":"Priya Sharma","action":"acquired","timestamp":"2026-05-15T09:20","notes":"Recovered from recoverable items; full internet headers retained.","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-05-15T09:28:00.000Z"},
+        {"id":"coc-b04","evidenceId":"ev-b01","handledBy":"Eleanor Voss (General Counsel)","action":"transferred","timestamp":"2026-05-16T11:00","notes":"Read-only copy provided to legal for the Art. 33 risk assessment. Hash verified on receipt.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-16T11:10:00.000Z"},
+        {"id":"coc-b05","evidenceId":"ev-b04","handledBy":"Beazley claims (external)","action":"transferred","timestamp":"2026-05-18T14:00","notes":"Provided to insurer in support of crime/social-engineering claim CRM-2026-0412.","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-05-18T14:15:00.000Z"},
+        {"id":"coc-b06","evidenceId":"ev-b02","handledBy":"Dan Howett","action":"analysed","timestamp":"2026-05-15T14:00","notes":"Rule logic confirmed: any message containing 'invoice', 'bank', 'payment' or 'remittance' moved to RSS Feeds and marked read.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-15T14:10:00.000Z"}
+      ],
+      "iocs": [
+        {"id":"ioc-b01","type":"email","hashAlgo":"","otherLabel":"","value":"accounts-verify@secure-invoicing-portal.com","confidence":95,"mitreId":"T1566","mitreTactic":"initial-access","source":"j.mensah@ mailbox","observedAt":"2026-04-27T08:12","notes":"Sender of the original credential-harvesting phishing email. Display name spoofed the M365 service.","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-05-15T09:40:00.000Z"},
+        {"id":"ioc-b02","type":"url","hashAlgo":"","otherLabel":"","value":"https://login-microsoftonline.secure-invoicing-portal.com/auth","confidence":95,"mitreId":"T1056","mitreTactic":"credential-access","source":"Phishing email body","observedAt":"2026-04-27T08:12","notes":"Adversary-in-the-middle credential harvesting page mimicking the M365 sign-in. Captured session token.","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-05-15T09:45:00.000Z"},
+        {"id":"ioc-b03","type":"ipv4","hashAlgo":"","otherLabel":"","value":"45.132.192.221","confidence":90,"mitreId":"T1078","mitreTactic":"initial-access","source":"Entra ID sign-in logs","observedAt":"2026-04-28T02:47","notes":"First unauthorised sign-in to the mailbox. Hosting provider ASN, geolocated outside normal user pattern.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T18:05:00.000Z"},
+        {"id":"ioc-b04","type":"ipv6","hashAlgo":"","otherLabel":"","value":"2a03:2880:f10c:83:face:b00c:0:25de","confidence":70,"mitreId":"T1078","mitreTactic":"persistence","source":"Entra ID sign-in logs","observedAt":"2026-05-06T23:11","notes":"Secondary source address used during the persistence window. Lower confidence — possible shared infrastructure.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T18:12:00.000Z"},
+        {"id":"ioc-b05","type":"user-agent","hashAlgo":"","otherLabel":"","value":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36","confidence":65,"mitreId":"T1078","mitreTactic":"defense-evasion","source":"Entra ID sign-in logs","observedAt":"2026-04-28T02:47","notes":"Linux/Chrome UA inconsistent with the user's managed Windows estate — used as a hunting pivot across the tenant.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T18:20:00.000Z"},
+        {"id":"ioc-b06","type":"account","hashAlgo":"","otherLabel":"","value":"j.mensah@","confidence":100,"mitreId":"T1078","mitreTactic":"initial-access","source":"Microsoft 365","observedAt":"2026-04-28T02:47","notes":"Compromised internal mailbox. Legitimate account used to send the fraudulent request, which is why it passed all filtering.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T18:25:00.000Z"},
+        {"id":"ioc-b07","type":"other","hashAlgo":"","otherLabel":"inbox-rule","value":"Rule: move to RSS Feeds + mark read where subject contains invoice|bank|payment|remittance","confidence":100,"mitreId":"T1564","mitreTactic":"defense-evasion","source":"j.mensah@ mailbox","observedAt":"2026-04-28T03:15","notes":"Hiding rule created 28 minutes after first access. Concealed supplier correspondence from the legitimate user for 16 days.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T18:30:00.000Z"},
+        {"id":"ioc-b08","type":"domain","hashAlgo":"","otherLabel":"","value":"secure-invoicing-portal.com","confidence":95,"mitreId":"T1583","mitreTactic":"resource-development","source":"Email headers / DNS","observedAt":"2026-04-27T08:12","notes":"Attacker-registered domain (registered 21 Apr, 6 days before use). Hosted both the phishing page and sender infrastructure.","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-05-15T09:50:00.000Z"},
+        {"id":"ioc-b09","type":"other","hashAlgo":"","otherLabel":"oauth-app-id","value":"e9c1a4b7-2d63-4f80-9a15-6b3ce8d70f42","confidence":85,"mitreId":"T1098","mitreTactic":"persistence","source":"Entra ID enterprise applications","observedAt":"2026-04-29T10:03","notes":"Third-party OAuth application consented by the actor to retain mailbox read access independent of password reset.","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T18:35:00.000Z"}
+      ],
+      "actions": [
+        {"id":"act-b01","title":"Revoke all sessions and force credential reset on j.mensah@","owner":"IT Ops","priority":"high","due":"2026-05-14T16:30","status":"done","notes":"Sessions revoked, password reset, MFA methods re-registered from scratch.","createdAt":"2026-05-14T16:00:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T16:00:00.000Z"},
+        {"id":"act-b02","title":"Delete malicious inbox rule (preserve export first)","owner":"Dan Howett","priority":"high","due":"2026-05-14T17:45","status":"done","notes":"Exported to JSON as ev-b02, then removed from the mailbox.","createdAt":"2026-05-14T16:05:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T16:05:00.000Z"},
+        {"id":"act-b03","title":"Revoke attacker-consented OAuth application grant","owner":"IT Ops","priority":"high","due":"2026-05-14T18:45","status":"done","notes":"Grant revoked and app blocked tenant-wide. This was the actual persistence mechanism — password reset alone would not have evicted the actor.","createdAt":"2026-05-14T18:20:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T18:20:00.000Z"},
+        {"id":"act-b04","title":"Initiate payment recall with bank","owner":"Finance (Fiona Grant)","priority":"high","due":"2026-05-14T20:00","status":"done","notes":"Recall raised same day. GBP 61,200 of GBP 84,500 recovered on 20 May.","createdAt":"2026-05-14T18:50:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-05-14T18:50:00.000Z"},
+        {"id":"act-b05","title":"Tenant-wide hunt for the same phishing domain and OAuth app","owner":"Priya Sharma","priority":"high","due":"2026-05-15T17:00","status":"done","notes":"No other mailboxes affected. Two users received the phishing email but did not interact with it.","createdAt":"2026-05-14T19:00:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-05-14T19:00:00.000Z"},
+        {"id":"act-b06","title":"Introduce mandatory verbal callback for supplier bank-detail changes","owner":"Finance (Fiona Grant)","priority":"high","due":"2026-05-20T17:00","status":"done","notes":"Process change signed off and in force from 19 May. Callback must use the number on file, never one supplied in the request.","createdAt":"2026-05-15T09:00:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-05-15T09:00:00.000Z"},
+        {"id":"act-b07","title":"Block legacy authentication and enforce phishing-resistant MFA for Finance","owner":"IT Ops","priority":"medium","due":"2026-05-29T17:00","status":"done","notes":"Conditional access policy deployed to Finance and Procurement groups first, wider rollout scheduled separately.","createdAt":"2026-05-15T11:00:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-15T11:00:00.000Z"},
+        {"id":"act-b08","title":"Daily review of new OAuth consent grants during monitoring window","owner":"SOC","priority":"medium","due":"2026-05-15T09:00","status":"done","notes":"Heightened monitoring for 7 days post-containment. No further suspicious consents observed.","createdAt":"2026-05-14T19:30:00.000Z","recur":"daily","recurEnd":"2026-05-21T09:00","recurHours":"","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-14T19:30:00.000Z"},
+        {"id":"act-b09","title":"Targeted BEC awareness briefing for AP and Procurement","owner":"Marcus Webb","priority":"medium","due":"2026-05-21T14:00","status":"done","notes":"Delivered 21 May using this incident (anonymised) as the worked example.","createdAt":"2026-05-16T10:00:00.000Z","recur":"none","recurEnd":"","recurHours":"","addedBy":"Priya S","addedByColor":"#0f8b8d","addedAt":"2026-05-16T10:00:00.000Z"},
+        {"id":"act-b10","title":"Weekly conditional-access policy review","owner":"IT Ops","priority":"low","due":"2026-05-22T10:00","status":"open","notes":"Ongoing control assurance carried forward beyond case closure.","createdAt":"2026-05-20T10:00:00.000Z","recur":"weekly","recurEnd":"2026-07-31T10:00","recurHours":"","addedBy":"Dan H","addedByColor":"#7b5ea7","addedAt":"2026-05-20T10:00:00.000Z"}
+      ],
+      "escalations": [
+        {"id":"esc-b01","from":"medium","to":"high","changedBy":"Marcus Webb","timestamp":"2026-05-14T16:10","reason":"Initial triage as a suspected single phishing victim (medium) revised once confirmed funds had already left the organisation and the mailbox had been under adversary control for over two weeks."},
+        {"id":"esc-b02","from":"high","to":"medium","changedBy":"Marcus Webb","timestamp":"2026-05-20T11:00","reason":"De-escalated following successful partial recall, confirmation of no lateral movement, and completion of all containment actions. Retained at medium through to formal closure."}
+      ],
+      "notifications": [
+        {"id":"notif-b01","recipient":"CISO / Executive team","type":"internal-management","channel":"phone","deadline":"2026-05-14T17:20","basis":"Internal IR policy — immediate escalation for confirmed financial loss","notes":"Verbal briefing at 15:55, written summary same evening.","sent":true,"sentAt":"2026-05-14T15:55:00.000Z"},
+        {"id":"notif-b02","recipient":"General counsel","type":"legal-counsel","channel":"phone","deadline":"2026-05-14T19:20","basis":"Notify before any external communication or regulatory decision","notes":"Engaged to advise on the Art. 33 assessment.","sent":true,"sentAt":"2026-05-14T16:30:00.000Z"},
+        {"id":"notif-b03","recipient":"Data Protection Officer","type":"internal-management","channel":"email","deadline":"2026-05-15T15:20","basis":"Internal policy — DPO assessment of personal data exposure","notes":"Assessment concluded no high risk to data subjects; documented in lieu of ICO notification.","sent":true,"sentAt":"2026-05-14T17:00:00.000Z"},
+        {"id":"notif-b04","recipient":"Cyber insurer (Beazley)","type":"insurance","channel":"email","deadline":"2026-05-15T15:20","basis":"Policy obligation — notify within 24h of discovered loss","notes":"Crime/social-engineering section engaged. Claim CRM-2026-0412 opened for residual GBP 23,300.","sent":true,"sentAt":"2026-05-14T18:10:00.000Z"},
+        {"id":"notif-b05","recipient":"Affected supplier (Northgate Components Ltd)","type":"internal-management","channel":"phone","deadline":"2026-05-16T15:20","basis":"Duty to inform affected counterparty of fraudulent correspondence","notes":"Supplier informed their details were spoofed; confirmed their own systems were not compromised. Relationship retained.","sent":true,"sentAt":"2026-05-15T11:30:00.000Z"},
+        {"id":"notif-b06","recipient":"Action Fraud (UK)","type":"regulator","channel":"written-report","deadline":"2026-05-21T15:20","basis":"Report of cyber-enabled fraud","notes":"Reported with crime reference NFRC260514882 for insurer and bank recall support.","sent":true,"sentAt":"2026-05-16T09:40:00.000Z"}
+      ],
+      "rootCauses": [
+        {"id":"rc-b01","factor":"Session-token phishing bypassed MFA","type":"technical","detail":"The adversary-in-the-middle phishing page captured a valid session token, so possession of the second factor did not prevent access. Standard app-based MFA offered no protection against this technique.","remediation":"Phishing-resistant MFA (FIDO2 / certificate-based) enforced for Finance and Procurement via conditional access, with wider rollout planned. Sign-in risk policies enabled."},
+        {"id":"rc-b02","factor":"No alerting on malicious inbox rule creation","type":"technical","detail":"The hiding rule was created 28 minutes after the first unauthorised sign-in but generated no alert, allowing the actor to conceal supplier correspondence for 16 days.","remediation":"Detection rule deployed for inbox rules that move messages to obscure folders or mark them read, plus alerting on new OAuth consent grants."},
+        {"id":"rc-b03","factor":"Bank-detail changes accepted over email alone","type":"process","detail":"Accounts Payable was able to action a supplier bank-detail change on the basis of an email from a known internal address, with no out-of-band verification step.","remediation":"Mandatory verbal callback to the number held on file introduced for all bank-detail changes, with dual authorisation above GBP 10,000. In force from 19 May."},
+        {"id":"rc-b04","factor":"Detection depended on an individual's judgement","type":"people","detail":"The compromise was found only because an AP clerk thought the request felt unusual and escalated. No technical control surfaced 16 days of adversary activity.","remediation":"Targeted BEC awareness briefing delivered to AP and Procurement, positively reinforcing the escalation. Escalation route publicised more widely."}
+      ],
+      "recurCompleted": {
+        "act-b08:2026-05-15T09:00": true,
+        "act-b08:2026-05-16T09:00": true,
+        "act-b08:2026-05-17T09:00": true,
+        "act-b08:2026-05-18T09:00": true,
+        "act-b08:2026-05-19T09:00": true,
+        "act-b08:2026-05-20T09:00": true,
+        "act-b08:2026-05-21T09:00": true,
+        "act-b10:2026-05-22T10:00": true
+      },
+      "closure": {
+        "checks": {
+          "cl1": true, "cl2": true, "cl3": true, "cl4": true, "cl5": true,
+          "cl6": true, "cl7": true, "cl8": true, "cl9": true, "cl10": true,
+          "cl11": true, "cl12": true, "cl13": true, "cl14": true, "cl15": true,
+          "cl16": true, "cl17": true, "cl18": true, "cl19": true, "cl20": true,
+          "cl21": true, "cl22": true
+        },
+        "notes": {
+          "cl7": "All six evidence items retained on the evidence share with hashes verified. Retention set to 7 years given the active insurance claim.",
+          "cl14": "ICO notification not made — documented Art. 33(1) risk assessment retained instead, signed off by DPO and General Counsel 16 May.",
+          "cl18": "Net loss GBP 23,300 after GBP 61,200 recall. Insurance claim CRM-2026-0412 remains open at closure and is tracked by Finance, not by the IR team."
+        }
+      },
+      "lessons": {
+        "sessionDate": "2026-05-22T10:00",
+        "facilitator": "Marcus Webb (CISO)",
+        "attendees": "Dan Howett, Priya Sharma, Fiona Grant (COO), Raj Patel (DPO), Accounts Payable lead",
+        "well": "The AP clerk escalated on instinct rather than actioning the request, which stopped a second payment. Containment was fast once triggered — sessions revoked, rule removed and OAuth grant killed within 3h20m of detection. Same-day bank recall recovered 72% of the funds.",
+        "better": "Sixteen days of adversary access produced no technical alert whatsoever. Detection depended entirely on one person's judgement. The team's first instinct was a password reset, and the OAuth grant was only found because someone thought to check enterprise applications — without that, the actor would have retained access after the reset.",
+        "detect": "Alert on malicious inbox rule creation, new OAuth consent grants, and impossible-travel or unfamiliar-UA sign-ins for finance-facing staff. Consider a low-noise canary rule on high-risk mailboxes.",
+        "playbook": "Add an explicit 'check and revoke OAuth grants' step to the account-compromise playbook — password reset alone is insufficient against token and consent persistence. Add a finance-fraud branch covering payment recall timelines.",
+        "training": "BEC-specific briefing for AP and Procurement delivered 21 May. Recommend adding an AiTM session-token scenario to the annual phishing simulation, since standard MFA does not defend against it.",
+        "recs": "1. Complete the phishing-resistant MFA rollout beyond Finance and Procurement to all staff with access to payment or supplier data (owner: IT Ops, Q3).\n2. Treat OAuth consent grants as a first-class persistence mechanism — enable admin consent workflow so users cannot self-consent third-party applications (owner: IT Ops, Q3).\n3. Extend the verbal-callback control to all changes of payment destination, not only supplier bank details (owner: Finance, complete).\n4. Deploy detections for inbox-rule creation and anomalous sign-in user agents; target mean time to detect under 48 hours for mailbox compromise (owner: SOC, Q3).\n5. Review mailbox audit log retention — 90 days was only just sufficient to cover the 16-day dwell plus investigation window (owner: IT Ops, Q3)."
+      },
+      "exec": {}
+    }
+  },
+  "activeCaseId": "sample-case-bec-002",
+  "activeTab": "dashboard"
+}
