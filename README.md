@@ -10,9 +10,10 @@ TRACE helps incident responders manage the full lifecycle of a security incident
 
 ## Contents
 
+- [What's new](#whats-new)
 - [Why TRACE](#why-trace)
 - [Quick start](#quick-start)
-- [The sample case](#the-sample-case)
+- [Sample cases](#sample-cases)
 - [Feature overview](#feature-overview)
 - [Data & privacy](#data--privacy)
 - [Saving your work](#saving-your-work)
@@ -23,6 +24,37 @@ TRACE helps incident responders manage the full lifecycle of a security incident
 - [File structure](#file-structure)
 - [FAQ](#faq)
 - [Disclaimer](#disclaimer)
+
+---
+
+## What's new
+
+### Reporting & exports
+
+- **Dedicated Reports tab.** Reporting is now a first-class section on the main menu bar rather than being buried in a submenu. All four export types — incident report, CSV, STIX 2.1 and ATT&CK Navigator — sit together as cards showing what each one contains (`13 indicators`, `38 records`, and so on).
+- **Choose what goes in the report.** Pick exactly which sections to include; the header summary, key timestamps, governance snapshot and incident narrative are always present. Section numbering renumbers itself so there are never gaps. A live preview updates as you change the selection.
+- **Readable in every theme.** The report preview renders on white regardless of whether you're in Midnight, Daybreak or Console.
+
+### IOC handling
+
+- **Automatic defanging.** Live indicators are neutralised wherever a human reads them — in the app, the incident report and the CSV export (`185[.]220[.]101[.]47`, `hxxps://`). Hashes, filenames and account names are left alone. STIX exports keep raw values, since they must stay machine-parseable.
+- **Host-aware duplicate detection.** Adding an indicator already logged *on the same host* prompts a warning. The same indicator on a *different* host is kept, because that's a distinct and forensically meaningful sighting.
+- **Search and filter.** Filter IOCs and evidence by value, type, host, MITRE ID or notes, with a live match count.
+- **Observed-at times.** Each IOC records when it was *seen*, separate from when it was logged, so the timeline reflects reality rather than data-entry order.
+- **View by host.** Group indicators by the system they were seen on, sorted earliest-first for a per-host mini-timeline.
+- **Full 14-tactic ATT&CK coverage**, including Reconnaissance and Resource Development, with exports pinned to the current ATT&CK version.
+
+### Data integrity
+
+- **Delete confirmation** on every record, naming what's about to be removed.
+- **No orphaned custody records.** Deleting an evidence item that has chain-of-custody entries attached warns you and removes those entries too, so the custody chain never references evidence that no longer exists.
+
+### Interface
+
+- **Three themes** — Midnight (dark navy, default), Daybreak (warm parchment) and Console (terminal green).
+- **Incident milestones on the timeline.** Detected, reported, contained and resolved appear as timeline events, so containment — the dwell-time boundary — is visible where it matters.
+- **Editable timestamps from the dashboard.** Click any entry in the timestamp strip to set or change it inline.
+- **Two sample cases** to load and explore (see below).
 
 ---
 
@@ -45,7 +77,7 @@ It captures the artefacts that matter for a defensible investigation — evidenc
 
 1. **Download** `TRACE-CMS.html`.
 2. **Open it** in a modern browser (Chrome or Edge recommended — see [Browser support](#browser-support)).
-3. Click **New case** and complete the short intake wizard, **or** load the [sample case](#the-sample-case) to explore a fully worked example.
+3. Click **New case** and complete the short intake wizard, **or** load a [sample case](#sample-cases) to explore a fully worked example.
 4. Click **? Guide** (top right) at any time for an in-app walkthrough.
 
 That's it. There is nothing to install and no account to create.
@@ -54,23 +86,36 @@ That's it. There is nothing to install and no account to create.
 
 ---
 
-## The sample case
+## Sample cases
 
-`trace-sample-case.json` is a comprehensive, realistic worked example: a **ransomware incident** on a finance file server (`IR-2026-014`). It is designed to exercise every feature of the system, so it is useful both for evaluating TRACE and for training.
+Two fully worked example cases are included. They are deliberately different in shape, so between them they exercise every feature of the system — useful for evaluating TRACE and for training.
 
-**To load it:** open TRACE, click **Load file** in the sidebar, and select `trace-sample-case.json`.
+**To load one:** open TRACE, click **Load file** in the sidebar, and select the `.json` file. Loading **merges** the case alongside anything you already have — it will not overwrite your existing work. Both samples use distinct case IDs, so you can load them together and switch between them in the sidebar.
 
-The sample includes:
+### 1. Ransomware — `trace-sample-case.json`
 
-- A full incident narrative and complete governance block (incident commander, legal, DPO, insurer, external IR retainer, business impact, reputational risk)
-- **5 evidence items** with SHA-256 integrity hashes and **4 chain-of-custody entries** (acquire → transfer → analyse)
-- **7 IOCs** across multiple types (IPv4, account, hashes, domain, filename) covering five MITRE ATT&CK tactics, each with an observed-at time so the timeline is forensically accurate
-- **6 response actions**, including two recurring tasks (a twice-daily executive briefing and daily leak-site monitoring) with completed instances logged
-- **6 notifications** — five sent, one pending — spanning regulator, internal, legal, and insurance obligations with real deadlines
-- A severity escalation, three root causes with remediations, and a partially completed closure checklist
-- Two analysts stamped throughout, so attribution and the merge workflow have realistic data
+**`IR-2026-014` — Akira ransomware on a finance file server.** Critical severity, still in progress. A fast, loud incident: initial access via a contractor VPN account with no MFA, discovery and credential harvesting, ~340GB exfiltrated, then encryption.
 
-Loading the sample **merges** it alongside any cases you already have — it will not overwrite your existing work.
+- **13 IOCs** spanning **7 ATT&CK tactics** — initial access, discovery, credential access, persistence, C2, exfiltration and impact
+- IOCs aligned to genuine Akira tradecraft documented in CISA advisory **AA24-109A**: the `itadm` persistence account, Rclone exfiltration, AnyDesk for remote access, `akira_readme.txt` ransom notes, the `.akira` extension, and shadow-copy deletion
+- **5 evidence items** with SHA-256 hashes and **4 chain-of-custody entries** (acquire → transfer → analyse)
+- **6 response actions**, two of them recurring (twice-daily executive briefing, daily leak-site monitoring) with completed instances logged
+- **6 notifications** — five sent, one pending — across regulator, internal, legal and insurance obligations
+- A severity escalation, three root causes with remediations, and a partially complete closure checklist
+
+Good for seeing the tool under pressure: overdue notifications, open actions, live dwell-time metrics.
+
+### 2. Business email compromise — `trace-sample-case-bec.json`
+
+**`IR-2026-009` — supplier payment diversion.** High severity, **closed**. A slow-burn financial fraud: a mailbox compromised via session-token phishing, ~16 days of quiet persistence behind a hiding inbox rule, then a fraudulent bank-detail change and an £84,500 payment — of which £61,200 was recalled.
+
+- **9 IOCs** covering IOC types the ransomware case doesn't use — email, URL, IPv6, user-agent and custom `other` types (an inbox rule, an OAuth app ID)
+- **10 actions**, **6 evidence items**, **6 custody entries**, **4 root causes** across technical, process and people categories
+- **Two escalations including a de-escalation**, so the severity log shows movement in both directions
+- **A fully completed closure checklist (22/22)** and a **complete lessons-learned section** — session details, what went well and badly, detection and playbook improvements, and five numbered recommendations
+- A documented decision *not* to notify the ICO under Art. 33(1), with the reasoning retained — a realistic judgement call rather than a straightforward notification
+
+Good for seeing a completed case end-to-end: the resolution metrics, the full report with lessons and recommendations, and closure.
 
 ---
 
@@ -82,23 +127,31 @@ TRACE is organised into tabs, aligned to the phases of an incident.
 
 **Incident details** — core incident metadata, narrative, affected systems, and severity/status.
 
-**Evidence** — the evidence register. Log each item with type, integrity hash, source, and who collected it and when.
+**Evidence** — the evidence register. Log each item with type, integrity hash, source, and who collected it and when. Filterable.
 
 **Custody** — chain-of-custody entries linked to evidence items, recording each handling event (acquired, transferred, analysed, returned) for a defensible audit trail.
 
-**IOCs** — indicators of compromise with inline **MITRE ATT&CK** technique lookup (search by what you observed — e.g. "powershell", "lsass", "scheduled task"- no need to remember every ATT&CK tactic). Each IOC records an **observed-at** time (when it was seen, distinct from when it was logged) so the timeline reflects reality. IOCs can be viewed as a flat list or grouped **by host**.
+**IOCs** — indicators of compromise with inline **MITRE ATT&CK** technique lookup (search by what you observed — e.g. "powershell", "lsass", "scheduled task" — no need to remember every ATT&CK technique ID). Each IOC records an **observed-at** time so the timeline reflects reality. View as a flat list or grouped **by host**, and filter by value, type, host, MITRE ID or notes.
+
+Indicators are **defanged automatically** wherever a human reads them, and adding one that already exists on the same host prompts a duplicate warning — while the same indicator on a different host is kept as a distinct sighting.
 
 **Actions** — response tasks with owner, priority, due date, and status. Supports **recurring** actions (e.g. twice-daily briefings) with per-instance completion tracking.
 
 **Timeline** — a unified incident timeline combining evidence, custody, IOCs, actions, escalations, notifications, and phase milestones (detected/reported/contained/resolved). Filter by type; switch between list and visual views.
 
-**More** menu — governance context, severity log, notifications tracker, closure checklist, printable report, and an IR reference.
+**Reports** — the reporting and export hub. See [Exports & integrations](#exports--integrations).
+
+**More** menu — governance context, severity log, notifications tracker, closure checklist, and an IR reference.
 
 ### Governance & compliance
 
 - **Notifications tracker** with deadline calculation from detection time, distinguishing regulatory obligations (ICO/UK GDPR, NIS2, DORA, and others) from internal and advisory notifications, with sent/pending status
 - **Closure checklist** covering containment, evidence, IOCs, recovery, actions, and notifications
 - NIST incident response lifecycle alignment surfaced throughout
+
+### Data integrity
+
+Deleting a record always asks for confirmation and names what's being removed. Deleting an evidence item that has chain-of-custody entries attached warns you and removes those entries too, so the custody record never contains orphaned references to evidence that no longer exists.
 
 ---
 
@@ -122,6 +175,8 @@ Links TRACE to a `.json` file on your computer and **auto-saves to it on every c
 - Click **Connect workspace** → **Create new** to choose a location and filename, or **Open existing** to resume auto-saving into a file you made earlier.
 - A green indicator confirms "Auto-saving to *[file]*" once connected.
 - After a full browser restart, click **Connect → Open** once to re-link the file (browsers drop the file handle when closed). Between launches you remain protected by browser storage.
+
+The workspace file stores your **entire workspace**, not just the active case — every open case, plus which case and tab you were last on. Reconnecting after a crash restores all of it exactly as you left it.
 
 ### Save to file
 
@@ -155,17 +210,19 @@ Nothing is ever overwritten destructively; everyone's work is preserved. The mer
 
 ## Exports & integrations
 
-TRACE exports case data in the formats downstream tools expect. Export buttons are in the top bar and the IOC tab.
+All exports live together in the **Reports** tab, each showing what it will contain before you generate it.
 
 | Export | Format | Use |
 |---|---|---|
-| **STIX 2.1** | JSON bundle | Share indicators and observed data with threat-intel platforms |
-| **ATT&CK Navigator** | Navigator layer JSON | Visualise tagged techniques on the MITRE ATT&CK matrix (current ATT&CK version) |
-| **CSV** | Single spreadsheet | All artefacts (evidence, custody, IOCs, actions, escalations, notifications, root causes) flattened into one CSV for spreadsheets or SIEM import |
-| **Report** | Printable HTML | A formatted incident report for stakeholders, with custom options for selecting only the sections you wish to export |
+| **Incident report** | PDF / HTML | A formatted report for stakeholders. Choose exactly which sections to include; preview before generating |
+| **CSV** | Single spreadsheet | All artefacts (evidence, custody, IOCs, actions, escalations, notifications, root causes) flattened into one file |
+| **STIX 2.1** | JSON bundle | Share indicators with threat-intel platforms, MISP, or partner organisations |
+| **ATT&CK Navigator** | Navigator layer JSON | Visualise tagged techniques on the MITRE ATT&CK matrix |
 | **JSON** | TRACE workspace | Full-fidelity backup, sharing, and the basis for the merge workflow |
 
-The CSV export uses proper quoting/escaping and a UTF-8 byte-order mark so it opens cleanly in Excel. The ATT&CK Navigator layer and STIX exports use standard STIX tactic shortnames so techniques land in the correct columns.
+The CSV export uses proper quoting/escaping and a UTF-8 byte-order mark so it opens cleanly in Excel. STIX and Navigator exports use standard STIX tactic shortnames so techniques land in the correct columns, and are pinned to the current ATT&CK version.
+
+**A note on defanging:** IOC values are defanged in the incident report and CSV, since those are read and shared by people. **STIX exports keep raw, live values** — a defanged pattern would be invalid and would fail to match in any downstream platform. If you use the CSV as an import path into tooling, re-fang the values first.
 
 ---
 
@@ -186,7 +243,7 @@ TRACE works in any modern browser, but a few features rely on the **File System 
 - **Connect workspace** (continuous auto-save to a disk file) requires a **Chromium-based browser** (Chrome or Edge).
 - In browsers without this API (e.g. Firefox, Safari), TRACE still works fully — it falls back to browser storage plus manual **Save to file** / **Load file**. The **Connect workspace** option is hidden where unsupported.
 
-Everything else — all tabs, exports, themes, merge, and the sample case — works everywhere.
+Everything else — all tabs, exports, themes, merge, and the sample cases — works everywhere.
 
 ---
 
@@ -195,7 +252,9 @@ Everything else — all tabs, exports, themes, merge, and the sample case — wo
 | File | Description |
 |---|---|
 | `TRACE-CMS.html` | The complete application — a single self-contained HTML file. This is all you need to run TRACE. |
-| `trace-sample-case.json` | A comprehensive worked example (ransomware incident) to load and explore. |
+| `trace-sample-case.json` | Sample case 1 — Akira ransomware, critical, in progress. |
+| `trace-sample-case-bec.json` | Sample case 2 — business email compromise, high, closed with full lessons learned. |
+| `docs/trace-dashboard.PNG` | Dashboard preview image used in this README. |
 | `README.md` | This guide. |
 
 The application is a single file with no build step and no external dependencies beyond a web font loaded from Google Fonts (it degrades gracefully to system fonts offline).
@@ -210,14 +269,20 @@ No. Open `TRACE-CMS.html` in a browser and you're running.
 **Is my data sent anywhere?**
 No. Everything stays in your browser and, if you connect a workspace, in a file on your own disk.
 
-**Will loading the sample case overwrite my work?**
-No — loading and merging combine cases; they never destructively replace your existing cases.
+**Will loading a sample case overwrite my work?**
+No — loading and merging combine cases; they never destructively replace your existing cases. You can load both samples at once.
+
+**If my browser crashes with several cases open, do I get them all back?**
+Yes. The workspace file holds your entire workspace, including every open case and which one you were viewing. Reconnect the file and you're back where you were.
 
 **Can several people work on one incident?**
 Yes. Each analyst keeps their own copy and one person merges the others in with **Merge analyst copy**. Records are attributed to whoever added them.
 
 **What happens to my workspace connection after I close the browser?**
 Browser storage keeps your data safe between launches. To resume live auto-save to your disk file, click **Connect → Open** once after restarting.
+
+**Why are IOCs shown with brackets in them?**
+That's defanging — it stops live indicators being clicked accidentally or detonated by a mail gateway when a report is shared. STIX exports keep the real values.
 
 **Which browser should I use?**
 Chrome or Edge for the full experience (including workspace auto-save). Others work with manual save/load.
@@ -226,7 +291,7 @@ Chrome or Edge for the full experience (including workspace auto-save). Others w
 
 ## Disclaimer
 
-TRACE is a case-management and record-keeping aid. It does not provide legal advice. Regulatory notification deadlines and obligations shown in the tool are aids to tracking and must be verified against the applicable regulations and your organisation's legal counsel for any real incident. You are responsible for the security and handling of the case data you enter and export.  
+TRACE is a case-management and record-keeping aid. It does not provide legal advice. Regulatory notification deadlines and obligations shown in the tool are aids to tracking and must be verified against the applicable regulations and your organisation's legal counsel for any real incident. You are responsible for the security and handling of the case data you enter and export.
 
 ### No warranty & data-loss disclaimer
 
