@@ -207,19 +207,21 @@ It is a separate single HTML file, **`trace-brief.html`**, that runs the same wa
 
 **Why it exists.** The question after an incident is rarely "what were the indicators". It's *how long were they in, how did they get in, what did they touch, and how fast did we react*. Those answers exist in the case data but not in a form anyone outside the response team can absorb. Brief derives them and presents them visually.
 
-### The five views
+### The six views
 
-They are ordered as a briefing runs — what happened, how it unfolded, step by step, where it spread, what was used — and numbered so they can be walked through in sequence. Each view links on to the next.
+They are ordered as a briefing runs — bottom line first, then how it unfolded, step by step, where it spread, what was used — and numbered so they can be walked through in sequence. Each view links on to the next.
 
-**1. Key facts** — the opener. A single headline metric (dwell time where it can be derived, otherwise time-to-contain), a response clock comparing time to report, contain and resolve, ranked tactic activity, the incident flow with elapsed time between phases, and metric tiles for indicators, hosts, evidence, actions and notifications. This is the slide that answers *how bad was it, and how fast did we move*.
+**1. Executive summary** — the one-page answer, structured BLUF. A single block above the fold carries the incident title, an auto-composed verdict (*"Critical severity Ransomware affecting FIN-SRV-02. Contained within 4h 38m of detection. The incident remains open."*), the four figures that matter — estimated cost, attacker dwell time, time to contain, systems affected — and a status row answering whether the threat is contained, the incident resolved, notifications discharged and actions closed. Below that: business impact drawn from the governance record, the narrative in brief with a plain-English judgement on detection speed, root causes each paired with its remediation, everything still outstanding, and who ran the response. This is the page you print and hand over.
 
-**2. Attack progression** — the observed ATT&CK tactics laid out along a kill-chain spine in true order, with each stage sized by how many indicators support it. This is the "how did this unfold" slide: initial access through to impact, readable at a glance, with the indicators for each stage listed underneath.
+**2. Key facts** — the metrics view. A headline figure, a response clock comparing time to report, contain and resolve, ranked tactic activity, the incident flow with elapsed time between each phase, and metric tiles for indicators, hosts, evidence, actions and notifications.
 
-**3. IOC timeline** — every indicator across every host in chronological order, one per row, with the elapsed gap between each. Response milestones (detected, contained, resolved) are interleaved in position, so it's immediately visible which indicators pre-date detection and which were found during the response. Each entry carries its timestamp, tactic, technique, host, confidence and the analyst's notes — so the sequence reads as a narrative you can walk a room through, step by step.
+**3. Attack progression** — the observed ATT&CK tactics laid out along a kill-chain spine in true order, each stage sized by how many indicators support it. This is the "how did this unfold" slide: initial access through to impact, readable at a glance, with the indicators for each stage listed underneath.
 
-**4. Host swimlanes** — one lane per system, with threads connecting indicators in observed order. This is the lateral-movement picture: where the attacker started, where they went, and when. Hosts can be shown or hidden individually to focus on a particular system.
+**4. IOC timeline** — every indicator across every host in chronological order, one per row, with the elapsed gap between each. Response milestones (detected, contained, resolved) are interleaved in position, so it's immediately visible which indicators pre-date detection and which were found during the response. Each entry carries its timestamp, tactic, technique, host, confidence and the analyst's notes — so the sequence reads as a narrative you can walk a room through, step by step.
 
-**5. Techniques** — coverage across all 14 ATT&CK Enterprise tactics, showing which stages were observed and which were not. The gaps are often as informative as the hits. Technique IDs link out to the MITRE knowledge base.
+**5. Host swimlanes** — one lane per system, with threads connecting indicators in observed order. This is the lateral-movement picture: where the attacker started, where they went, and when. Hosts can be shown or hidden individually to focus on a particular system.
+
+**6. Techniques** — coverage across all 14 ATT&CK Enterprise tactics, showing which stages were observed and which were not. The gaps are often as informative as the hits. Technique IDs link out to the MITRE knowledge base.
 
 ### Practical notes
 
@@ -306,7 +308,7 @@ Chrome or Edge for the full experience (including workspace auto-save). Others w
 
 ### TRACE Brief — a companion briefing tool
 
-A second single-file tool, **`trace-brief.html`**, turns a finished case into something you can put in front of a management audience. Drop in the same `.json` you already save from TRACE and it builds five briefing views, ordered as a briefing runs: a key-facts infographic, an attack progression along the ATT&CK kill chain, a full chronological IOC timeline with narrative, host swimlanes and a technique breakdown. Same offline model, same three themes. See [TRACE Brief](#trace-brief--post-incident-briefing).
+A second single-file tool, **`trace-brief.html`**, turns a finished case into something you can put in front of a management audience. Drop in the same `.json` you already save from TRACE and it builds it builds six briefing views, opening with an executive summary and ordered as a briefing runs: a key-facts infographic, an attack progression along the ATT&CK kill chain, a full chronological IOC timeline with narrative, host swimlanes and a technique breakdown. Same offline model, same three themes. See [TRACE Brief](#trace-brief--post-incident-briefing).
 
 ### Reporting & exports
 
