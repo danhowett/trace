@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TRACE Brief — Incident Visualiser</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%230d1524'/%3E%3Cpath d='M6 27 L13 27 L20 12 L27 22 L34 22' stroke='%234a9eff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ccircle cx='20' cy='12' r='4' fill='%234a9eff'/%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1524;--bg2:#151f34;--bg3:#243450;
+  --text:#eef2f8;--text2:#aebdd2;--text3:#7787a0;
+  --border:#2a3a5a;--border2:#42557d;
+  --info-bg:#14304f;--info-text:#6fb2ff;
+  --warn-bg:#3d2d10;--warn-text:#f8bd52;
+  --danger-bg:#421826;--danger-text:#ff7d8d;
+  --success-bg:#153a24;--success-text:#5cd98a;
+  --accent:#4a9eff;--accent-hover:#6cb0ff;
+  --field:#0f1a2e;
+  --radius:6px;--radius-lg:9px;
+  --shadow:0 1px 3px rgba(0,0,0,0.35),0 4px 16px rgba(0,0,0,0.28);
+  --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f7f4ec;--bg2:#fbf9f3;--bg3:#efe9dc;
+  --text:#2e3a3a;--text2:#5b6a68;--text3:#8a938c;
+  --border:#e4ddcd;--border2:#cbc3b0;
+  --info-bg:#e2ecf1;--info-text:#2c6a8f;
+  --warn-bg:#f6ecd4;--warn-text:#9a6f1e;
+  --danger-bg:#f4e0dc;--danger-text:#b04a3a;
+  --success-bg:#e4ecd9;--success-text:#5a7a3a;
+  --accent:#3a7ca5;--accent-hover:#2f6a8f;
+  --field:#fffdf8;
+  --shadow:0 1px 3px rgba(70,60,40,0.06),0 4px 14px rgba(70,60,40,0.05);
+}
+[data-theme="console"]{
+  --bg:#0a0f0a;--bg2:#0d140d;--bg3:#111a11;
+  --text:#00ff41;--text2:#00cc33;--text3:#007a1f;
+  --border:#003d0f;--border2:#005c17;
+  --info-bg:#001a0a;--info-text:#00ff41;
+  --warn-bg:#1a1200;--warn-text:#ffd700;
+  --danger-bg:#1a1000;--danger-text:#ffaa00;
+  --success-bg:#001a05;--success-text:#00ff41;
+  --accent:#00ff41;--accent-hover:#00ff41;
+  --field:#0a0f0a;
+  --mono:'JetBrains Mono','Courier New',monospace;
+  --sans:'JetBrains Mono','Courier New',monospace;
+  --radius:2px;--radius-lg:3px;
+}
+[data-theme="console"] .stat-val,[data-theme="console"] .brand-wordmark{letter-spacing:0.15em}
+[data-theme="console"] button{text-transform:uppercase;letter-spacing:0.05em;font-size:11px}
+
+body{font-family:var(--sans);font-size:14px;color:var(--text);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── header ── */
+.topbar{display:flex;align-items:center;gap:14px;padding:16px 22px;background:var(--bg2);border-bottom:1px solid var(--border);flex-wrap:wrap;position:sticky;top:0;z-index:50}
+.brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.brand-wordmark{font-family:var(--mono);font-size:18px;font-weight:600;letter-spacing:0.2em;text-indent:0.2em;color:var(--text)}
+.brand-sub{font-size:8.5px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;font-weight:500;margin-top:3px}
+.topbar-spacer{flex:1}
+
+button{padding:8px 14px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg3);color:var(--text);font-size:13px;font-weight:500;font-family:var(--sans);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .12s,border-color .12s}
+button:hover:not(:disabled){background:var(--border);border-color:var(--accent)}
+button:active{transform:scale(.98)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+button.primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+button.sm{font-size:12px;padding:5px 10px}
+
+/* ── drop zone ── */
+.wrap{max-width:1240px;margin:0 auto;padding:26px 22px 60px}
+.drop{border:2px dashed var(--border2);border-radius:var(--radius-lg);padding:56px 28px;text-align:center;background:var(--bg2);transition:all .16s}
+.drop.over{border-color:var(--accent);background:var(--info-bg)}
+.drop h2{font-size:19px;font-weight:600;margin-bottom:7px}
+.drop p{color:var(--text3);font-size:13px;line-height:1.6;max-width:520px;margin:0 auto 18px}
+
+/* ── controls ── */
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:20px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg)}
+.seg{display:inline-flex;border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden}
+.seg button{border:none;border-radius:0;font-size:12px;padding:6px 13px;background:var(--bg3);color:var(--text2)}
+.seg button.on{background:var(--accent);color:#fff;font-weight:600}
+.ctl-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono)}
+
+/* ── panels ── */
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:18px}
+.panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;flex-wrap:wrap}
+.panel-title{font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text2)}
+.panel-sub{font-size:11.5px;color:var(--text3)}
+.panel-body{margin-top:14px}
+
+/* ── stat grid ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:18px}
+.stat{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:var(--radius-lg);padding:14px 15px}
+.stat-lbl{font-family:var(--mono);font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:6px}
+.stat-val{font-family:var(--mono);font-size:27px;font-weight:600;line-height:1.05;color:var(--text)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:5px;line-height:1.4}
+
+/* ── chips ── */
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;white-space:nowrap;font-family:var(--mono)}
+.chip-lg{font-size:12px;padding:5px 12px}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;padding:8px 10px;font-family:var(--mono);font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border)}
+td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.mono{font-family:var(--mono);font-size:11.5px}
+
+.empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px}
+.hidden{display:none!important}
+
+/* host filter */
+.hostfilter{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.hostpill{font-family:var(--mono);font-size:11px;padding:5px 11px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;transition:all .12s}
+.hostpill.on{border-color:var(--accent);background:var(--info-bg);color:var(--info-text)}
+
+svg{display:block;max-width:100%;height:auto}
+.tip{position:fixed;z-index:200;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:9px 13px;font-size:12px;box-shadow:var(--shadow);pointer-events:none;display:none;max-width:300px;line-height:1.5}
+.tip.on{display:block}
+
+@media print{
+  .topbar,.controls,.no-print{display:none!important}
+  body{background:#fff;color:#111}
+  .panel,.stat{break-inside:avoid;background:#fff;border-color:#ddd}
+  .wrap{max-width:none;padding:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+      <path d="M5 27 L13 27 L20 12 L27 22 L35 22" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="13" cy="27" r="3.3" fill="var(--bg2)" stroke="var(--text)" stroke-width="2.1"/>
+      <circle cx="20" cy="12" r="3.3" fill="var(--bg2)" stroke="var(--text)" stroke-width="2.1"/>
+      <circle cx="27" cy="22" r="3.3" fill="var(--accent)"/>
+    </svg>
+    <div>
+      <div class="brand-wordmark">BRIEF</div>
+      <div class="brand-sub">Incident Visualiser</div>
+    </div>
+  </div>
+  <div class="topbar-spacer"></div>
+  <span id="case-tag" class="chip hidden"></span>
+  <button class="sm" onclick="pickFile()">↥ Load case</button>
+  <button class="sm" onclick="window.print()" id="btn-print" disabled>⎙ Print / PDF</button>
+  <button class="sm" onclick="cycleTheme()" id="theme-btn">◑ Midnight</button>
+</div>
+
+<div class="wrap">
+
+  <!-- LANDING -->
+  <div id="landing">
+    <div class="drop" id="drop">
+      <h2>Drop a TRACE case file here</h2>
+      <p>Load a <code>.json</code> file exported from TRACE to generate briefing visuals — an attack progression, host swimlanes, a key-facts sheet and a technique breakdown. Everything runs in your browser; nothing is uploaded.</p>
+      <button class="primary" onclick="pickFile()">Choose file</button>
+      <div style="margin-top:18px;font-size:11.5px;color:var(--text3)">Multiple cases in one file? You'll be asked which to open.</div>
+    </div>
+  </div>
+
+  <!-- CASE PICKER -->
+  <div id="picker" class="hidden">
+    <div class="panel">
+      <div class="panel-head"><span class="panel-title">Choose a case</span></div>
+      <div class="panel-body" id="picker-list"></div>
+    </div>
+  </div>
+
+  <!-- REPORT -->
+  <div id="report" class="hidden">
+    <div class="controls no-print">
+      <span class="ctl-label">View</span>
+      <div class="seg" id="viewseg"></div>
+      <div style="flex:1"></div>
+      <span class="ctl-label" id="scope-note"></span>
+    </div>
+    <div id="views"></div>
+  </div>
+
+</div>
+
+<div class="tip" id="tip"></div>
+<input type="file" id="fileinput" accept=".json,application/json" style="display:none">
+
+<script>
+/* ══════════════ THEME ══════════════ */
+var THEMES=['','light','console'], LABELS={'':'◑ Midnight','light':'◑ Daybreak','console':'◑ Console'};
+function applyTheme(t){
+  var r=document.documentElement;
+  if(t)r.setAttribute('data-theme',t); else r.removeAttribute('data-theme');
+  document.getElementById('theme-btn').textContent=LABELS[t]||LABELS[''];
+  try{localStorage.setItem('trace-brief-theme',t);}catch(e){}
+  if(CASE)render();
+}
+function cycleTheme(){
+  var cur=document.documentElement.getAttribute('data-theme')||'';
+  applyTheme(THEMES[(THEMES.indexOf(cur)+1)%THEMES.length]);
+}
+(function(){ var s=null; try{s=localStorage.getItem('trace-brief-theme');}catch(e){} applyTheme(s||''); })();
+
+/* ══════════════ CONSTANTS ══════════════ */
+/* Kill-chain order — matches ATT&CK Enterprise */
+var TACTIC_ORDER=['reconnaissance','resource-development','initial-access','execution','persistence',
+  'privilege-escalation','defense-evasion','credential-access','discovery','lateral-movement',
+  'collection','command-and-control','exfiltration','impact'];
+var TACTIC_SHORT={'reconnaissance':'Recon','resource-development':'Resource Dev','initial-access':'Initial Access',
+  'execution':'Execution','persistence':'Persistence','privilege-escalation':'Priv Esc','defense-evasion':'Defense Evasion',
+  'credential-access':'Cred Access','discovery':'Discovery','lateral-movement':'Lateral Move','collection':'Collection',
+  'command-and-control':'C2','exfiltration':'Exfiltration','impact':'Impact'};
+var TYPE_COL={milestone:'#64748b',evidence:'#378ADD',custody:'#BA7517',ioc:'#D85A30',
+  action:'#639922',escalation:'#993556',notification:'#534AB7'};
+
+var CASE=null, LOADED=null, VIEW='facts', HOSTS_ON={};
+
+/* ══════════════ UTIL ══════════════ */
+function esc(s){return String(s==null?'':s).replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});}
+function pd(s){ /* parse local ISO without timezone shift */
+  if(!s)return null;
+  var m=String(s).match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+  if(m)return new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5]);
+  var d=new Date(s); return isNaN(d)?null:d;
+}
+function fmtDT(s){var d=pd(s);if(!d)return '—';
+  return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes());}
+function fmtD(d){return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});}
+function p2(n){return n<10?'0'+n:''+n;}
+function dur(ms){
+  if(ms==null||ms<0)return '—';
+  var m=Math.floor(ms/60000),h=Math.floor(m/60),d=Math.floor(h/24);
+  if(d>0)return d+'d '+(h%24)+'h';
+  if(h>0)return h+'h '+(m%60)+'m';
+  return m+'m';
+}
+function cssv(n,f){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||f;}
+/* Defang for display — same rules as TRACE */
+function defang(v,t){
+  if(!v)return '';var s=String(v);
+  if(t==='ipv4')return s.replace(/\.(?=\d)/g,'[.]');
+  if(t==='ipv6')return s.replace(/:/g,'[:]');
+  if(t==='domain')return s.replace(/\./g,'[.]');
+  if(t==='url')return s.replace(/^http:/i,'hxxp:').replace(/^https:/i,'hxxps:').replace(/\./g,'[.]');
+  if(t==='email')return s.replace(/@/g,'[@]').replace(/\./g,'[.]');
+  return s;
+}
+function iocVal(i){return ['ipv4','ipv6','domain','url','email'].indexOf(i.type)>-1?defang(i.value,i.type):(i.value||'');}
+function iocTime(i){return i.observedAt||i.addedAt;}
+function host(i){return (i.source||'').trim()||'Unattributed';}
+
+/* ══════════════ FILE LOADING ══════════════ */
+function pickFile(){document.getElementById('fileinput').click();}
+document.getElementById('fileinput').addEventListener('change',function(e){
+  if(e.target.files[0])readFile(e.target.files[0]);e.target.value='';
+});
+var dz=document.getElementById('drop');
+['dragenter','dragover'].forEach(function(ev){
+  document.addEventListener(ev,function(e){e.preventDefault();dz&&dz.classList.add('over');});
+});
+['dragleave','drop'].forEach(function(ev){
+  document.addEventListener(ev,function(e){e.preventDefault();
+    if(ev==='drop'&&e.dataTransfer.files[0])readFile(e.dataTransfer.files[0]);
+    dz&&dz.classList.remove('over');});
+});
+function readFile(f){
+  var r=new FileReader();
+  r.onload=function(ev){
+    var d;
+    try{ d=JSON.parse(ev.target.result); }
+    catch(err){ alert('That file isn\'t valid JSON. Export a case from TRACE using Save to file.'); return; }
+    if(!d||!d.cases||typeof d.cases!=='object'){
+      alert('That doesn\'t look like a TRACE case file — no cases found inside it.'); return;
+    }
+    LOADED=d;
+    var keys=Object.keys(d.cases);
+    if(!keys.length){ alert('That file contains no cases.'); return; }
+    if(keys.length===1) openCase(keys[0]); else showPicker(keys);
+  };
+  r.readAsText(f);
+}
+function showPicker(keys){
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('report').classList.add('hidden');
+  document.getElementById('picker').classList.remove('hidden');
+  document.getElementById('picker-list').innerHTML=keys.map(function(k){
+    var c=LOADED.cases[k],m=c.meta||{};
+    return '<div onclick="openCase(\''+k+'\')" style="padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;background:var(--bg)" '+
+      'onmouseover="this.style.borderColor=\'var(--accent)\'" onmouseout="this.style.borderColor=\'var(--border)\'">'+
+      '<div class="mono" style="color:var(--text3);font-size:10.5px">'+esc(m.id||k)+'</div>'+
+      '<div style="font-weight:600;margin:3px 0">'+esc(m.title||'Untitled')+'</div>'+
+      '<div style="font-size:11.5px;color:var(--text3)">'+esc(m.severity||'')+' · '+esc(m.status||'')+' · '+
+        ((c.iocs||[]).length)+' IOCs · '+((c.evidence||[]).length)+' evidence</div></div>';
+  }).join('');
+}
+function openCase(k){
+  CASE=LOADED.cases[k];
+  HOSTS_ON={};
+  (CASE.iocs||[]).forEach(function(i){HOSTS_ON[host(i)]=true;});
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('picker').classList.add('hidden');
+  document.getElementById('report').classList.remove('hidden');
+  document.getElementById('btn-print').disabled=false;
+  var tag=document.getElementById('case-tag'),m=CASE.meta||{};
+  tag.className='chip';
+  tag.style.background='var(--info-bg)';tag.style.color='var(--info-text)';
+  tag.textContent=(m.id||'')+' · '+(m.severity||'');
+  render();
+}
+
+/* ══════════════ DERIVED DATA ══════════════ */
+function facts(){
+  var m=CASE.meta||{},iocs=CASE.iocs||[];
+  var det=pd(m.detectedAt),con=pd(m.containedAt),res=pd(m.resolvedAt),rep=pd(m.reportedAt);
+  var firstSeen=null;
+  iocs.forEach(function(i){var t=pd(iocTime(i));if(t&&(!firstSeen||t<firstSeen))firstSeen=t;});
+  var tactics={},techniques={},hosts={},types={};
+  iocs.forEach(function(i){
+    if(i.mitreTactic)tactics[i.mitreTactic]=(tactics[i.mitreTactic]||0)+1;
+    if(i.mitreId)techniques[i.mitreId]=(techniques[i.mitreId]||0)+1;
+    hosts[host(i)]=(hosts[host(i)]||0)+1;
+    types[i.type]=(types[i.type]||0)+1;
+  });
+  var acts=CASE.actions||[],done=acts.filter(function(a){return a.status==='done';}).length;
+  var notifs=CASE.notifications||[],sent=notifs.filter(function(n){return n.sent;}).length;
+  return {
+    m:m,iocs:iocs,det:det,con:con,res:res,rep:rep,firstSeen:firstSeen,
+    dwell:(firstSeen&&det)?det-firstSeen:null,
+    toContain:(det&&con)?con-det:null,
+    toReport:(det&&rep)?rep-det:null,
+    toResolve:(det&&res)?res-det:null,
+    tactics:tactics,techniques:techniques,hosts:hosts,types:types,
+    nTactics:Object.keys(tactics).length,nTech:Object.keys(techniques).length,
+    nHosts:Object.keys(hosts).length,
+    evidence:(CASE.evidence||[]).length,custody:(CASE.custody||[]).length,
+    actions:acts.length,actionsDone:done,
+    notifs:notifs.length,notifsSent:sent,
+    highConf:iocs.filter(function(i){return (i.confidence||0)>=80;}).length
+  };
+}
+function events(){
+  var ev=[],m=CASE.meta||{};
+  function add(ts,type,label,sub){var d=pd(ts);if(d)ev.push({d:d,type:type,label:label,sub:sub||''});}
+  add(m.detectedAt,'milestone','Detected','Dwell-time clock stops');
+  add(m.reportedAt,'milestone','Reported','Escalated internally');
+  add(m.containedAt,'milestone','Contained','Threat contained');
+  add(m.resolvedAt,'milestone','Resolved','Incident closed');
+  (CASE.iocs||[]).forEach(function(i){
+    add(iocTime(i),'ioc',iocVal(i),(i.mitreId?i.mitreId+' · ':'')+host(i));
+  });
+  (CASE.evidence||[]).forEach(function(e){add(e.collectedAt,'evidence',e.name,'Collected by '+(e.collectedBy||'—'));});
+  (CASE.custody||[]).forEach(function(r){
+    var e=(CASE.evidence||[]).find(function(x){return x.id===r.evidenceId;});
+    add(r.timestamp,'custody',(e?e.name:'Evidence')+' — '+(r.action||''),r.handledBy||'');
+  });
+  (CASE.actions||[]).forEach(function(a){add(a.due,'action',a.title,(a.owner||'')+' · '+(a.status||''));});
+  (CASE.escalations||[]).forEach(function(x){add(x.timestamp,'escalation',(x.from||'?')+' → '+(x.to||'?'),x.changedBy||'');});
+  (CASE.notifications||[]).forEach(function(n){
+    add(n.sentAt||n.deadline,'notification',n.recipient,(n.type||'')+(n.sent?' · sent':' · pending'));
+  });
+  return ev.sort(function(a,b){return a.d-b.d;});
+}
+
+/* ══════════════ RENDER ══════════════ */
+/* Ordered as a briefing narrative: what happened -> how it unfolded ->
+   step by step -> where it spread -> what was used. */
+var VIEWS=[
+  {k:'facts',n:'Key facts'},
+  {k:'progression',n:'Attack progression'},
+  {k:'narrative',n:'IOC timeline'},
+  {k:'hosts',n:'Host swimlanes'},
+  {k:'techniques',n:'Techniques'}
+];
+
+/* Advances through the briefing sequence so the views can be walked in order. */
+function nextLink(){
+  var i=VIEWS.map(function(v){return v.k;}).indexOf(VIEW);
+  if(i<0||i>=VIEWS.length-1)return '';
+  var nx=VIEWS[i+1];
+  return '<div class="no-print" style="display:flex;justify-content:flex-end;margin-top:-4px">'+
+    '<button onclick="setView(\''+nx.k+'\');window.scrollTo({top:0,behavior:\'smooth\'})" '+
+    'style="font-size:12.5px">Next: '+esc(nx.n)+' &rarr;</button></div>';
+}
+
+function setView(v){VIEW=v;render();}
+function render(){
+  if(!CASE)return;
+  document.getElementById('viewseg').innerHTML=VIEWS.map(function(v,vi){
+    return '<button class="'+(VIEW===v.k?'on':'')+'" onclick="setView(\''+v.k+'\')">'+
+      '<span class="mono" style="opacity:.55;margin-right:6px;font-size:10px">'+p2(vi+1)+'</span>'+v.n+'</button>';
+  }).join('');
+  var f=facts();
+  document.getElementById('scope-note').textContent=
+    f.iocs.length+' IOCs · '+f.nHosts+' hosts · '+f.nTactics+' tactics';
+  var host=document.getElementById('views');
+  if(VIEW==='progression')host.innerHTML=viewProgression(f)+nextLink();
+  else if(VIEW==='hosts')host.innerHTML=viewHosts(f)+nextLink();
+  else if(VIEW==='facts')host.innerHTML=viewFacts(f)+nextLink();
+  else if(VIEW==='narrative')host.innerHTML=viewNarrative(f)+nextLink();
+  else host.innerHTML=viewTechniques(f)+nextLink();
+}
+
+/* ── header block shared by views ── */
+function caseHeader(f){
+  var m=f.m;
+  var sevCol={critical:'var(--danger-text)',high:'var(--warn-text)',medium:'var(--info-text)',low:'var(--success-text)'}[m.severity]||'var(--text3)';
+  var sevBg={critical:'var(--danger-bg)',high:'var(--warn-bg)',medium:'var(--info-bg)',low:'var(--success-bg)'}[m.severity]||'var(--bg3)';
+  return '<div class="panel" style="border-left:3px solid '+sevCol+'">'+
+    '<div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">'+
+      '<div style="flex:1;min-width:260px">'+
+        '<div class="mono" style="font-size:10.5px;color:var(--text3);letter-spacing:.06em">'+esc(m.id||'')+'</div>'+
+        '<div style="font-size:19px;font-weight:600;margin:4px 0 8px;line-height:1.3">'+esc(m.title||'Untitled incident')+'</div>'+
+        '<div style="display:flex;gap:7px;flex-wrap:wrap">'+
+          '<span class="chip chip-lg" style="background:'+sevBg+';color:'+sevCol+'">'+esc(m.severity||'—')+'</span>'+
+          '<span class="chip chip-lg" style="background:var(--bg3);color:var(--text2)">'+esc(m.status||'—')+'</span>'+
+          (m.classification?'<span class="chip chip-lg" style="background:var(--bg3);color:var(--text2)">'+esc(m.classification)+'</span>':'')+
+        '</div>'+
+      '</div>'+
+      '<div style="font-family:var(--mono);font-size:11px;color:var(--text3);text-align:right;line-height:1.9;min-width:190px">'+
+        'Detected&nbsp;&nbsp;<span style="color:var(--text)">'+fmtDT(m.detectedAt)+'</span><br>'+
+        'Contained&nbsp;&nbsp;<span style="color:var(--text)">'+fmtDT(m.containedAt)+'</span><br>'+
+        'Resolved&nbsp;&nbsp;<span style="color:var(--text)">'+fmtDT(m.resolvedAt)+'</span>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+/* ══════════════ VIEW 1 — ATTACK PROGRESSION ══════════════ */
+/* The signature view: kill-chain spine, nodes sized by IOC count,
+   in true ATT&CK order so the attack narrative reads left to right. */
+function viewProgression(f){
+  var present=TACTIC_ORDER.filter(function(t){return f.tactics[t];});
+  if(!present.length)return caseHeader(f)+'<div class="panel"><div class="empty">No MITRE tactics tagged on this case&rsquo;s IOCs, so there&rsquo;s no attack progression to draw. Tag IOCs with techniques in TRACE to build this view.</div></div>';
+
+  var W=1180,PAD=54,H=300;
+  var LPAD=118; /* extra room on the left — rotated labels extend back past their node */
+  var step=present.length>1?(W-LPAD-PAD)/(present.length-1):0;
+  var max=Math.max.apply(null,present.map(function(t){return f.tactics[t];}));
+  var ACC=cssv('--accent','#4a9eff'),TXT=cssv('--text','#eef2f8'),
+      T3=cssv('--text3','#7787a0'),BD=cssv('--border','#2a3a5a'),BG2=cssv('--bg2','#151f34');
+  var spineY=140;
+  var s=['<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Attack progression across MITRE ATT&CK tactics">'];
+
+  /* spine */
+  s.push('<line x1="'+LPAD+'" y1="'+spineY+'" x2="'+(W-PAD)+'" y2="'+spineY+'" stroke="'+BD+'" stroke-width="2"/>');
+  /* directional arrow */
+  s.push('<path d="M'+(W-PAD+2)+' '+spineY+' l-9 -5 l0 10 z" fill="'+BD+'"/>');
+
+  present.forEach(function(t,i){
+    var x=LPAD+i*step, n=f.tactics[t];
+    var r=11+ (n/max)*15;
+    /* connector emphasis between consecutive nodes */
+    if(i>0){
+      s.push('<line x1="'+(LPAD+(i-1)*step)+'" y1="'+spineY+'" x2="'+x+'" y2="'+spineY+'" stroke="'+ACC+'" stroke-width="2" opacity="0.55"/>');
+    }
+    /* halo + node */
+    s.push('<circle cx="'+x+'" cy="'+spineY+'" r="'+(r+7)+'" fill="'+ACC+'" opacity="0.10"/>');
+    s.push('<circle cx="'+x+'" cy="'+spineY+'" r="'+r+'" fill="'+ACC+'" stroke="'+BG2+'" stroke-width="2.5"/>');
+    s.push('<text x="'+x+'" y="'+(spineY+4.5)+'" text-anchor="middle" font-family="'+"'JetBrains Mono',monospace"+'" font-size="12" font-weight="600" fill="#fff">'+n+'</text>');
+    /* stage number above */
+    s.push('<text x="'+x+'" y="'+(spineY-r-16)+'" text-anchor="middle" font-family="'+"'JetBrains Mono',monospace"+'" font-size="10" fill="'+T3+'">'+p2(i+1)+'</text>');
+    /* label below, angled for density */
+    var lbl=TACTIC_SHORT[t]||t;
+    s.push('<text x="'+x+'" y="'+(spineY+r+22)+'" text-anchor="end" transform="rotate(-38 '+x+' '+(spineY+r+22)+')" '+
+      'font-family="'+"'Inter',sans-serif"+'" font-size="11.5" font-weight="500" fill="'+TXT+'">'+esc(lbl)+'</text>');
+  });
+
+  /* first/last timestamps as context */
+  var lo=null,hi=null;
+  f.iocs.forEach(function(i){var d=pd(iocTime(i));if(d){if(!lo||d<lo)lo=d;if(!hi||d>hi)hi=d;}});
+  if(lo)s.push('<text x="'+LPAD+'" y="'+(H-14)+'" font-family="'+"'JetBrains Mono',monospace"+'" font-size="10" fill="'+T3+'">first observed '+fmtD(lo)+'</text>');
+  if(hi)s.push('<text x="'+(W-PAD)+'" y="'+(H-14)+'" text-anchor="end" font-family="'+"'JetBrains Mono',monospace"+'" font-size="10" fill="'+T3+'">last observed '+fmtD(hi)+'</text>');
+  s.push('</svg>');
+
+  /* per-stage detail */
+  var detail=present.map(function(t,i){
+    var list=f.iocs.filter(function(x){return x.mitreTactic===t;});
+    return '<div style="padding:11px 0;border-bottom:1px solid var(--border)">'+
+      '<div style="display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin-bottom:5px">'+
+        '<span class="mono" style="color:var(--text3);font-size:10.5px">'+p2(i+1)+'</span>'+
+        '<span style="font-weight:600;font-size:13px">'+esc(TACTIC_SHORT[t]||t)+'</span>'+
+        '<span class="mono" style="font-size:10.5px;color:var(--text3)">'+list.length+' indicator'+(list.length===1?'':'s')+'</span>'+
+      '</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;padding-left:22px">'+
+        list.map(function(x){
+          return '<span class="chip" style="background:var(--bg3);color:var(--text2);font-weight:400">'+
+            (x.mitreId?'<strong style="color:var(--accent)">'+esc(x.mitreId)+'</strong> ':'')+esc(iocVal(x))+'</span>';
+        }).join('')+
+      '</div></div>';
+  }).join('');
+
+  return caseHeader(f)+
+    '<div class="panel">'+
+      '<div class="panel-head"><span class="panel-title">Attack progression</span>'+
+      '<span class="panel-sub">Observed tactics in ATT&amp;CK kill-chain order. Node size reflects how many indicators map to each stage.</span></div>'+
+      '<div class="panel-body">'+s.join('')+'</div>'+
+    '</div>'+
+    '<div class="panel"><div class="panel-head"><span class="panel-title">Stage detail</span></div>'+
+    '<div class="panel-body">'+detail+'</div></div>';
+}
+
+/* ══════════════ VIEW 2 — HOST SWIMLANES ══════════════ */
+function toggleHost(h){HOSTS_ON[h]=!HOSTS_ON[h];render();}
+function allHosts(on){Object.keys(HOSTS_ON).forEach(function(h){HOSTS_ON[h]=on;});render();}
+function viewHosts(f){
+  var hostNames=Object.keys(f.hosts).sort(function(a,b){return f.hosts[b]-f.hosts[a];});
+  var active=hostNames.filter(function(h){return HOSTS_ON[h];});
+  var pills='<div class="hostfilter no-print">'+
+    hostNames.map(function(h){
+      return '<button class="hostpill '+(HOSTS_ON[h]?'on':'')+'" onclick="toggleHost(\''+esc(h).replace(/'/g,"\\'")+'\')">'+
+        esc(h)+' <span style="opacity:.7">'+f.hosts[h]+'</span></button>';
+    }).join('')+
+    '<button class="hostpill" onclick="allHosts(true)">All</button>'+
+    '<button class="hostpill" onclick="allHosts(false)">None</button></div>';
+
+  if(!active.length)return caseHeader(f)+'<div class="panel">'+pills+'<div class="empty">No hosts selected. Choose at least one above to draw the swimlanes.</div></div>';
+
+  /* time domain across selected hosts */
+  var pts=[];
+  f.iocs.forEach(function(i){
+    if(active.indexOf(host(i))<0)return;
+    var d=pd(iocTime(i)); if(d)pts.push({d:d,i:i});
+  });
+  if(!pts.length)return caseHeader(f)+'<div class="panel">'+pills+'<div class="empty">The selected hosts have no time-stamped indicators. Add observed-at times in TRACE to place them.</div></div>';
+
+  var lo=new Date(Math.min.apply(null,pts.map(function(p){return p.d;})));
+  var hi=new Date(Math.max.apply(null,pts.map(function(p){return p.d;})));
+  if(hi-lo<3600000){lo=new Date(lo-1800000);hi=new Date(+hi+1800000);}
+  var span=hi-lo;
+
+  var W=1180,LW=170,PAD=26,LANE=46,HEAD=40;
+  var plot=W-LW-PAD;
+  var Hh=HEAD+active.length*LANE+26;
+  var ACC=cssv('--accent','#4a9eff'),BD=cssv('--border','#2a3a5a'),BD2=cssv('--border2','#42557d'),
+      T3=cssv('--text3','#7787a0'),TXT=cssv('--text','#eef2f8'),BG2=cssv('--bg2','#151f34');
+  var s=['<svg viewBox="0 0 '+W+' '+Hh+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Indicator activity by host over time">'];
+
+  /* time gridlines */
+  var TICKS=6;
+  for(var t=0;t<=TICKS;t++){
+    var x=LW+(plot*t/TICKS), dt=new Date(+lo+span*t/TICKS);
+    s.push('<line x1="'+x+'" y1="'+HEAD+'" x2="'+x+'" y2="'+(Hh-20)+'" stroke="'+BD+'" stroke-width="1"/>');
+    s.push('<text x="'+x+'" y="'+(HEAD-12)+'" text-anchor="middle" font-family="'+"'JetBrains Mono',monospace"+'" font-size="10" fill="'+T3+'">'+fmtD(dt)+'</text>');
+  }
+  /* milestone markers spanning all lanes */
+  [['detectedAt','Detected'],['containedAt','Contained']].forEach(function(pair){
+    var d=pd(f.m[pair[0]]); if(!d||d<lo||d>hi)return;
+    var x=LW+((d-lo)/span)*plot;
+    s.push('<line x1="'+x+'" y1="'+(HEAD-4)+'" x2="'+x+'" y2="'+(Hh-20)+'" stroke="'+ACC+'" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.8"/>');
+    s.push('<text x="'+(x+4)+'" y="'+(HEAD-24)+'" font-family="'+"'JetBrains Mono',monospace"+'" font-size="9.5" fill="'+ACC+'">'+pair[1]+'</text>');
+  });
+
+  active.forEach(function(h,li){
+    var y=HEAD+li*LANE+LANE/2;
+    s.push('<text x="'+(LW-12)+'" y="'+(y+4)+'" text-anchor="end" font-family="'+"'JetBrains Mono',monospace"+'" font-size="11" font-weight="600" fill="'+TXT+'">'+esc(h.length>20?h.slice(0,19)+'…':h)+'</text>');
+    s.push('<line x1="'+LW+'" y1="'+(HEAD+li*LANE+LANE)+'" x2="'+(W-PAD)+'" y2="'+(HEAD+li*LANE+LANE)+'" stroke="'+BD+'" stroke-width="1"/>');
+    var mine=pts.filter(function(p){return host(p.i)===h;}).sort(function(a,b){return a.d-b.d;});
+    /* connecting thread shows sequence on this host */
+    if(mine.length>1){
+      var pathd=mine.map(function(p,k){
+        return (k?'L':'M')+(LW+((p.d-lo)/span)*plot)+' '+y;
+      }).join(' ');
+      s.push('<path d="'+pathd+'" stroke="'+ACC+'" stroke-width="1.5" fill="none" opacity="0.35"/>');
+    }
+    mine.forEach(function(p){
+      var x=LW+((p.d-lo)/span)*plot;
+      var conf=p.i.confidence||0;
+      var r=conf>=80?6:conf>=50?5:4;
+      var lbl=esc(iocVal(p.i)).replace(/'/g,'&#39;');
+      var sub=esc((p.i.mitreId?p.i.mitreId+' · ':'')+(p.i.type||'')+' · '+conf+'% confidence').replace(/'/g,'&#39;');
+      var ts=fmtDT(iocTime(p.i));
+      s.push('<g style="cursor:pointer" onmousemove="showTip(event,\''+lbl+'\',\''+sub+'\',\''+ts+'\')" onmouseleave="hideTip()">'+
+        '<circle cx="'+x+'" cy="'+y+'" r="'+(r+6)+'" fill="'+TYPE_COL.ioc+'" opacity="0"/>'+
+        '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+TYPE_COL.ioc+'" stroke="'+BG2+'" stroke-width="1.5"/></g>');
+    });
+  });
+  s.push('<line x1="'+LW+'" y1="'+HEAD+'" x2="'+LW+'" y2="'+(Hh-20)+'" stroke="'+BD2+'" stroke-width="1.5"/>');
+  s.push('</svg>');
+
+  /* per-host table */
+  var tbl=active.map(function(h){
+    var mine=f.iocs.filter(function(i){return host(i)===h;})
+      .sort(function(a,b){var x=pd(iocTime(a)),y=pd(iocTime(b));return (x&&y)?x-y:0;});
+    return '<div style="margin-bottom:16px">'+
+      '<div style="display:flex;gap:9px;align-items:baseline;margin-bottom:7px">'+
+        '<span class="mono" style="font-weight:600;font-size:12.5px">'+esc(h)+'</span>'+
+        '<span class="mono" style="font-size:10.5px;color:var(--text3)">'+mine.length+' indicator'+(mine.length===1?'':'s')+'</span></div>'+
+      '<table><thead><tr><th style="width:15%">Observed</th><th style="width:11%">Type</th>'+
+      '<th style="width:34%">Value</th><th style="width:14%">MITRE</th><th>Notes</th></tr></thead><tbody>'+
+      mine.map(function(i){
+        return '<tr><td class="mono" style="color:var(--text3)">'+fmtDT(iocTime(i))+'</td>'+
+          '<td><span class="chip" style="background:var(--bg3);color:var(--text2);font-weight:500">'+esc(i.type)+'</span></td>'+
+          '<td class="mono">'+esc(iocVal(i))+'</td>'+
+          '<td class="mono" style="color:var(--accent)">'+esc(i.mitreId||'—')+'</td>'+
+          '<td style="color:var(--text2)">'+esc(i.notes||'')+'</td></tr>';
+      }).join('')+'</tbody></table></div>';
+  }).join('');
+
+  return caseHeader(f)+
+    '<div class="panel">'+
+      '<div class="panel-head"><span class="panel-title">Host swimlanes</span>'+
+      '<span class="panel-sub">Each lane is one system. Threads connect indicators in the order they were seen; dot size reflects confidence.</span></div>'+
+      '<div class="panel-body">'+pills+s.join('')+'</div>'+
+    '</div>'+
+    '<div class="panel"><div class="panel-head"><span class="panel-title">Indicators by host</span></div>'+
+    '<div class="panel-body">'+tbl+'</div></div>';
+}
+
+/* ══════════════ VIEW 3 — KEY FACTS ══════════════ */
+function viewFacts(f){
+  var m=f.m;
+  var sevCol={critical:'var(--danger-text)',high:'var(--warn-text)',medium:'var(--info-text)',low:'var(--success-text)'}[m.severity]||'var(--accent)';
+
+  /* ── icon set: simple, legible line glyphs ── */
+  function ic(path,size,col){
+    return '<svg width="'+(size||26)+'" height="'+(size||26)+'" viewBox="0 0 24 24" fill="none" '+
+      'stroke="'+(col||'currentColor')+'" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg>';
+  }
+  var ICONS={
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    shield:'<path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/>',
+    target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/>',
+    server:'<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/>',
+    grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+    folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+    check:'<circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/>',
+    bell:'<path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>',
+    alert:'<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17h.01"/>'
+  };
+
+  /* ── HERO: the number that matters most ── */
+  var heroVal,heroLbl,heroSub,heroCol,heroIcon;
+  if(f.dwell!=null){
+    heroVal=dur(f.dwell); heroLbl='Dwell time';
+    heroSub='from the earliest observed indicator until the incident was detected';
+    heroCol='var(--danger-text)'; heroIcon=ICONS.clock;
+  } else if(f.toContain!=null){
+    heroVal=dur(f.toContain); heroLbl='Time to contain';
+    heroSub='from detection to containment'; heroCol='var(--warn-text)'; heroIcon=ICONS.shield;
+  } else {
+    heroVal=String(f.iocs.length); heroLbl='Indicators of compromise';
+    heroSub='logged across '+f.nHosts+' host'+(f.nHosts===1?'':'s');
+    heroCol='var(--accent)'; heroIcon=ICONS.target;
+  }
+
+  /* supporting hero stats */
+  function heroStat(v,l){
+    return '<div style="text-align:center;padding:0 4px">'+
+      '<div class="mono" style="font-size:24px;font-weight:600;color:var(--text);line-height:1">'+v+'</div>'+
+      '<div style="font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:5px;font-family:var(--mono)">'+l+'</div></div>';
+  }
+  var hero=
+  '<div class="panel" style="padding:0;overflow:hidden;border-top:3px solid '+heroCol+'">'+
+    '<div style="display:flex;flex-wrap:wrap;align-items:stretch">'+
+      '<div style="flex:1.4;min-width:290px;padding:30px 30px 26px;display:flex;gap:20px;align-items:flex-start">'+
+        '<div style="color:'+heroCol+';flex-shrink:0;margin-top:5px">'+ic(heroIcon,42,heroCol)+'</div>'+
+        '<div style="min-width:0">'+
+          '<div class="mono" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px">'+heroLbl+'</div>'+
+          '<div class="mono" style="font-size:60px;font-weight:600;line-height:.95;color:'+heroCol+';letter-spacing:-.02em">'+heroVal+'</div>'+
+          '<div style="font-size:12.5px;color:var(--text2);margin-top:11px;line-height:1.55;max-width:330px">'+heroSub+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="flex:1;min-width:270px;background:var(--bg3);padding:26px 22px;display:flex;align-items:center;justify-content:space-around;gap:8px;flex-wrap:wrap">'+
+        heroStat(f.iocs.length,'Indicators')+
+        heroStat(f.nHosts,'Hosts')+
+        heroStat(f.nTactics,'Tactics')+
+        heroStat(f.evidence,'Evidence')+
+      '</div>'+
+    '</div>'+
+  '</div>';
+
+  /* ── RESPONSE CLOCK: three phases as proportional arcs ── */
+  function ring(val,label,ms,col){
+    var C=2*Math.PI*30;
+    /* scale each arc against the longest phase so they compare visually */
+    var maxMs=Math.max(f.toReport||0,f.toContain||0,f.toResolve||0)||1;
+    var frac=ms!=null?Math.min(ms/maxMs,1):0;
+    return '<div style="text-align:center;flex:1;min-width:120px">'+
+      '<svg width="86" height="86" viewBox="0 0 76 76">'+
+        '<circle cx="38" cy="38" r="30" fill="none" stroke="var(--bg3)" stroke-width="7"/>'+
+        (ms!=null?'<circle cx="38" cy="38" r="30" fill="none" stroke="'+col+'" stroke-width="7" stroke-linecap="round" '+
+          'stroke-dasharray="'+(C*frac).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 38 38)"/>':'')+
+        '<text x="38" y="42" text-anchor="middle" font-family="'+"'JetBrains Mono',monospace"+'" font-size="13" font-weight="600" fill="var(--text)">'+
+          (ms!=null?dur(ms):'—')+'</text>'+
+      '</svg>'+
+      '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono);margin-top:2px">'+label+'</div>'+
+    '</div>';
+  }
+  var clock=
+  '<div class="panel">'+
+    '<div class="panel-head"><span class="panel-title">Response clock</span>'+
+    '<span class="panel-sub">Measured from detection. Arc length compares each phase against the longest.</span></div>'+
+    '<div class="panel-body" style="display:flex;gap:14px;flex-wrap:wrap;justify-content:space-around;padding:6px 0">'+
+      ring(0,'To report',f.toReport,'var(--info-text)')+
+      ring(0,'To contain',f.toContain,'var(--warn-text)')+
+      ring(0,'To resolve',f.toResolve,'var(--success-text)')+
+    '</div>'+
+  '</div>';
+
+  /* ── MILESTONE RIBBON: horizontal flow with elapsed gaps ── */
+  var ms=[['detectedAt','Detected'],['reportedAt','Reported'],['containedAt','Contained'],['resolvedAt','Resolved']]
+    .map(function(p){return {k:p[0],n:p[1],d:pd(m[p[0]])};});
+  var ribbon=ms.filter(function(x){return x.d;}).length?
+  '<div class="panel">'+
+    '<div class="panel-head"><span class="panel-title">Incident flow</span>'+
+    '<span class="panel-sub">Each phase, with time elapsed since the one before.</span></div>'+
+    '<div class="panel-body"><div style="display:flex;align-items:stretch;flex-wrap:wrap;gap:0">'+
+      ms.map(function(x,i){
+        var prev=null; for(var k=i-1;k>=0;k--){if(ms[k].d){prev=ms[k];break;}}
+        var reached=!!x.d;
+        var gap=(reached&&prev)?dur(x.d-prev.d):null;
+        return (i>0?'<div style="display:flex;align-items:center;padding:0 4px;flex-shrink:0">'+
+            '<div style="text-align:center">'+
+              (gap?'<div class="mono" style="font-size:10px;color:var(--accent);white-space:nowrap;margin-bottom:3px">+'+gap+'</div>':'<div style="height:15px"></div>')+
+              '<svg width="30" height="8" viewBox="0 0 30 8"><path d="M0 4h24M20 1l4 3-4 3" stroke="'+(reached?'var(--accent)':'var(--border2)')+'" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
+            '</div></div>':'')+
+          '<div style="flex:1;min-width:132px;padding:14px 15px;border-radius:var(--radius);background:'+(reached?'var(--bg)':'transparent')+';'+
+            'border:1px solid '+(reached?'var(--border2)':'var(--border)')+';'+(reached?'':'opacity:.5')+'">'+
+            '<div class="mono" style="font-size:9.5px;color:'+(reached?'var(--accent)':'var(--text3)')+';text-transform:uppercase;letter-spacing:.08em">'+x.n+'</div>'+
+            '<div class="mono" style="font-size:12px;margin-top:6px;color:var(--text)">'+(reached?fmtDT(m[x.k]):'not yet')+'</div>'+
+          '</div>';
+      }).join('')+
+    '</div></div>'+
+  '</div>':'';
+
+  /* ── METRIC TILES: icon + number, visually weighted ── */
+  function tile(icon,val,lbl,sub,col){
+    return '<div class="stat" style="border-top-color:'+col+';display:flex;gap:13px;align-items:flex-start">'+
+      '<div style="color:'+col+';flex-shrink:0;margin-top:2px">'+ic(icon,24,col)+'</div>'+
+      '<div style="min-width:0">'+
+        '<div class="stat-lbl">'+lbl+'</div>'+
+        '<div class="stat-val" style="font-size:24px">'+val+'</div>'+
+        (sub?'<div class="stat-sub">'+sub+'</div>':'')+
+      '</div></div>';
+  }
+  var topHost=Object.keys(f.hosts).sort(function(a,b){return f.hosts[b]-f.hosts[a];})[0];
+  var actPct=f.actions?Math.round(f.actionsDone/f.actions*100):0;
+  var tiles='<div class="stats">'+
+    tile(ICONS.target,f.iocs.length,'Indicators',f.highConf+' at 80%+ confidence',TYPE_COL.ioc)+
+    tile(ICONS.server,f.nHosts,'Hosts affected',topHost?('most active: '+esc(topHost)):'',TYPE_COL.evidence)+
+    tile(ICONS.grid,f.nTactics+' / 14','ATT&CK tactics',f.nTech+' distinct techniques','var(--accent)')+
+    tile(ICONS.folder,f.evidence,'Evidence items',f.custody+' custody entries',TYPE_COL.custody)+
+    tile(ICONS.check,actPct+'%','Actions complete',f.actionsDone+' of '+f.actions+' done',TYPE_COL.action)+
+    tile(ICONS.bell,f.notifsSent+' / '+f.notifs,'Notifications sent',
+      (f.notifs-f.notifsSent)>0?(f.notifs-f.notifsSent)+' still pending':'all obligations met',TYPE_COL.notification)+
+  '</div>';
+
+  /* ── INDICATOR MIX: stacked bar + legend ── */
+  var typeKeys=Object.keys(f.types).sort(function(a,b){return f.types[b]-f.types[a];});
+  var palette=['#D85A30','#378ADD','#639922','#534AB7','#BA7517','#993556','#64748b','#3a7ca5'];
+  var mix=typeKeys.length?
+  '<div class="panel">'+
+    '<div class="panel-head"><span class="panel-title">Indicator mix</span>'+
+    '<span class="panel-sub">Share of indicators by type.</span></div>'+
+    '<div class="panel-body">'+
+      '<div style="display:flex;height:30px;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">'+
+        typeKeys.map(function(t,i){
+          var pct=f.types[t]/f.iocs.length*100;
+          return '<div title="'+esc(t)+': '+f.types[t]+'" style="width:'+pct+'%;background:'+palette[i%palette.length]+';'+
+            'display:flex;align-items:center;justify-content:center">'+
+            (pct>9?'<span class="mono" style="font-size:10px;color:#fff;font-weight:600">'+f.types[t]+'</span>':'')+'</div>';
+        }).join('')+
+      '</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:12px">'+
+        typeKeys.map(function(t,i){
+          return '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2)">'+
+            '<span style="width:11px;height:11px;border-radius:3px;background:'+palette[i%palette.length]+'"></span>'+
+            esc(t)+' <span class="mono" style="color:var(--text3)">'+f.types[t]+'</span></span>';
+        }).join('')+
+      '</div>'+
+    '</div>'+
+  '</div>':'';
+
+  /* ── TOP TACTICS: ranked horizontal bars ── */
+  var tacRank=Object.keys(f.tactics).sort(function(a,b){return f.tactics[b]-f.tactics[a];}).slice(0,6);
+  var tmax=tacRank.length?f.tactics[tacRank[0]]:1;
+  var topTac=tacRank.length?
+  '<div class="panel">'+
+    '<div class="panel-head"><span class="panel-title">Where the indicators cluster</span>'+
+    '<span class="panel-sub">Tactics carrying the most evidence of activity.</span></div>'+
+    '<div class="panel-body">'+
+      tacRank.map(function(t){
+        var n=f.tactics[t];
+        return '<div style="display:flex;align-items:center;gap:12px;margin-bottom:9px">'+
+          '<div style="width:118px;font-size:12px;font-weight:500;flex-shrink:0">'+esc(TACTIC_SHORT[t]||t)+'</div>'+
+          '<div style="flex:1;height:20px;background:var(--bg3);border-radius:var(--radius);overflow:hidden">'+
+            '<div style="width:'+(n/tmax*100)+'%;height:100%;background:var(--accent);border-radius:var(--radius);'+
+              'display:flex;align-items:center;justify-content:flex-end;padding-right:7px">'+
+              '<span class="mono" style="font-size:10.5px;color:#fff;font-weight:600">'+n+'</span></div>'+
+          '</div></div>';
+      }).join('')+
+    '</div>'+
+  '</div>':'';
+
+  /* ── narrative ── */
+  var narrative=m.narrative?
+    '<div class="panel"><div class="panel-head"><span class="panel-title">What happened</span></div>'+
+    '<div class="panel-body" style="font-size:13px;line-height:1.75;color:var(--text2);white-space:pre-wrap">'+esc(m.narrative)+'</div></div>':'';
+
+  return caseHeader(f)+hero+
+    '<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start">'+
+      '<div style="flex:1;min-width:290px">'+clock+'</div>'+
+      '<div style="flex:1.25;min-width:300px">'+topTac+'</div>'+
+    '</div>'+
+    ribbon+tiles+mix+narrative;
+}
+
+/* ══════════════ VIEW — IOC NARRATIVE TIMELINE ══════════════ */
+/* Every indicator across every host, in chronological order. Nodes alternate
+   above and below the axis so labels have room; colour encodes ATT&CK tactic
+   so the kill chain reads visually as you scan left to right. */
+
+/* distinct, colour-blind-considerate hues assigned in kill-chain order */
+var TACTIC_HUE={
+  'reconnaissance':'#7c8fa3','resource-development':'#8e7cc3','initial-access':'#D85A30',
+  'execution':'#c0392b','persistence':'#BA7517','privilege-escalation':'#d68910',
+  'defense-evasion':'#8e44ad','credential-access':'#993556','discovery':'#2980b9',
+  'lateral-movement':'#16a085','collection':'#27ae60','command-and-control':'#534AB7',
+  'exfiltration':'#e67e22','impact':'#c0392b'
+};
+function tacHue(t){return TACTIC_HUE[t]||'#7787a0';}
+
+function viewNarrative(f){
+  /* Vertical spine: one row per indicator. Time in an incident is bursty —
+     several IOCs can share a timestamp — so giving each its own row keeps
+     labels legible no matter how tightly they cluster. Gaps between rows are
+     annotated rather than drawn to scale. */
+  var pts=[];
+  f.iocs.forEach(function(i){
+    var d=pd(iocTime(i));
+    if(d)pts.push({d:d,i:i,est:!i.observedAt});
+  });
+  pts.sort(function(a,b){return a.d-b.d;});
+  var undated=f.iocs.length-pts.length;
+
+  if(!pts.length){
+    return caseHeader(f)+'<div class="panel"><div class="empty">'+
+      'No indicators carry a timestamp, so there&rsquo;s no chronology to draw.<br>'+
+      'Set an <strong>observed-at</strong> time on IOCs in TRACE to build this view.</div></div>';
+  }
+
+  /* milestones interleaved into the sequence so response context sits inline */
+  var marks=[];
+  [['detectedAt','Detected','The incident became known'],
+   ['containedAt','Contained','Threat contained'],
+   ['resolvedAt','Resolved','Incident closed']].forEach(function(pr){
+    var d=pd(f.m[pr[0]]); if(d)marks.push({d:d,name:pr[1],desc:pr[2],raw:f.m[pr[0]]});
+  });
+
+  /* merge indicators + milestones into one ordered stream */
+  var stream=pts.map(function(p){return {kind:'ioc',d:p.d,p:p};})
+    .concat(marks.map(function(mk){return {kind:'mark',d:mk.d,mk:mk};}))
+    .sort(function(a,b){return a.d-b.d;});
+
+  /* group consecutive entries sharing the same minute — these are the ones
+     that previously collided; showing them as a cluster is more honest */
+  var iocNo=0;
+  var rows=stream.map(function(node,idx){
+    var prev=idx?stream[idx-1]:null;
+    var gapMs=prev?(node.d-prev.d):null;
+    var gapHtml='';
+    if(gapMs!=null){
+      var same=gapMs<60000;
+      gapHtml='<div style="display:flex;align-items:center;gap:11px;padding:2px 0">'+
+        '<div style="width:34px;display:flex;justify-content:center;flex-shrink:0">'+
+          '<div style="width:2px;height:'+(same?14:26)+'px;background:var(--border2);'+(same?'opacity:.5':'')+'"></div>'+
+        '</div>'+
+        '<div class="mono" style="font-size:10.5px;color:'+(same?'var(--text3)':'var(--accent)')+'">'+
+          (same?'same minute':'+'+dur(gapMs))+'</div>'+
+      '</div>';
+    }
+
+    if(node.kind==='mark'){
+      return gapHtml+
+        '<div style="display:flex;gap:11px;align-items:center;padding:7px 0">'+
+          '<div style="width:34px;display:flex;justify-content:center;flex-shrink:0">'+
+            '<div style="width:34px;height:34px;border-radius:50%;background:var(--accent);'+
+              'display:flex;align-items:center;justify-content:center">'+
+              '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4l7 3 7-3v11l-7 3-7-3"/></svg>'+
+            '</div>'+
+          '</div>'+
+          '<div style="flex:1;background:var(--info-bg);border:1px solid var(--accent);border-radius:var(--radius);padding:9px 14px">'+
+            '<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">'+
+              '<span style="font-weight:600;font-size:13px;color:var(--info-text)">'+esc(node.mk.name)+'</span>'+
+              '<span class="mono" style="font-size:11px;color:var(--text3)">'+fmtDT(node.mk.raw)+'</span>'+
+            '</div>'+
+            '<div style="font-size:11.5px;color:var(--text2);margin-top:2px">'+esc(node.mk.desc)+'</div>'+
+          '</div>'+
+        '</div>';
+    }
+
+    iocNo++;
+    var p=node.p, i=p.i, col=tacHue(i.mitreTactic);
+    var conf=i.confidence||0;
+    return gapHtml+
+      '<div style="display:flex;gap:11px;align-items:flex-start;padding:3px 0">'+
+        /* numbered node on the spine */
+        '<div style="width:34px;display:flex;justify-content:center;flex-shrink:0;padding-top:9px">'+
+          '<div style="width:30px;height:30px;border-radius:50%;border:2.5px solid '+col+';background:var(--bg);'+
+            'display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;'+
+            'font-weight:600;color:'+col+'">'+p2(iocNo)+'</div>'+
+        '</div>'+
+        /* detail card */
+        '<div style="flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);'+
+          'border-left:3px solid '+col+';border-radius:var(--radius);padding:11px 14px">'+
+          '<div style="display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin-bottom:5px">'+
+            '<span class="mono" style="font-size:11.5px;color:var(--text);font-weight:500">'+fmtDT(iocTime(i))+'</span>'+
+            (i.mitreTactic?'<span class="chip" style="background:'+col+'22;color:'+col+'">'+esc(TACTIC_SHORT[i.mitreTactic]||i.mitreTactic)+'</span>':'')+
+            (i.mitreId?'<a href="https://attack.mitre.org/techniques/'+encodeURIComponent(i.mitreId.replace('.','/'))+'/" '+
+              'target="_blank" rel="noopener" class="mono" style="font-size:10.5px;color:var(--accent);text-decoration:none">'+esc(i.mitreId)+' &#8599;</a>':'')+
+            (p.est?'<span class="mono" style="font-size:10px;color:var(--warn-text)">logged, not observed</span>':'')+
+          '</div>'+
+          '<div class="mono" style="font-size:13px;color:var(--text);word-break:break-all;line-height:1.45;margin-bottom:6px">'+esc(iocVal(i))+'</div>'+
+          '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--text3)">'+
+            '<span class="chip" style="background:var(--bg3);color:var(--text2);font-weight:500">'+esc(i.type)+'</span>'+
+            '<span>on <strong style="color:var(--text2)">'+esc(host(i))+'</strong></span>'+
+            '<span style="display:inline-flex;align-items:center;gap:5px">'+
+              '<span style="width:34px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;display:inline-block">'+
+                '<span style="display:block;width:'+conf+'%;height:100%;background:'+col+'"></span></span>'+
+              conf+'%</span>'+
+          '</div>'+
+          (i.notes?'<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:7px;'+
+            'border-left:2px solid var(--border2);padding-left:10px">'+esc(i.notes)+'</div>':'')+
+        '</div>'+
+      '</div>';
+  }).join('');
+
+  /* ── compact overview strip: proportional time distribution ── */
+  var lo=stream[0].d, hi=stream[stream.length-1].d, span=(hi-lo)||1;
+  var strip=pts.map(function(p){
+    var x=((p.d-lo)/span)*100;
+    return '<div title="'+esc(iocVal(p.i))+' — '+esc(fmtDT(iocTime(p.i)))+'" '+
+      'style="position:absolute;left:'+x+'%;top:50%;transform:translate(-50%,-50%);'+
+      'width:9px;height:9px;border-radius:50%;background:'+tacHue(p.i.mitreTactic)+';'+
+      'border:1.5px solid var(--bg2)"></div>';
+  }).join('')+
+  marks.map(function(mk){
+    var x=((mk.d-lo)/span)*100;
+    return '<div title="'+esc(mk.name)+'" style="position:absolute;left:'+x+'%;top:0;bottom:0;'+
+      'width:2px;background:var(--accent);opacity:.75"></div>';
+  }).join('');
+
+  var overview=
+  '<div style="margin-bottom:16px">'+
+    '<div style="position:relative;height:34px;background:var(--bg3);border-radius:var(--radius);margin-bottom:6px">'+strip+'</div>'+
+    '<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--text3)">'+
+      '<span>'+fmtDT(iocTime(pts[0].i))+'</span>'+
+      '<span>span '+dur(hi-lo)+'</span>'+
+      '<span>'+fmtDT(iocTime(pts[pts.length-1].i))+'</span>'+
+    '</div>'+
+  '</div>';
+
+  /* legend */
+  var seen={}; pts.forEach(function(p){if(p.i.mitreTactic)seen[p.i.mitreTactic]=1;});
+  var legend=TACTIC_ORDER.filter(function(t){return seen[t];}).map(function(t){
+    return '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)">'+
+      '<span style="width:11px;height:11px;border-radius:50%;background:'+tacHue(t)+'"></span>'+
+      esc(TACTIC_SHORT[t]||t)+'</span>';
+  }).join('');
+
+  return caseHeader(f)+
+    '<div class="panel">'+
+      '<div class="panel-head"><span class="panel-title">Time distribution</span>'+
+      '<span class="panel-sub">Where the activity clusters. Vertical lines are response milestones.</span></div>'+
+      '<div class="panel-body">'+overview+
+        '<div style="display:flex;flex-wrap:wrap;gap:14px">'+legend+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="panel">'+
+      '<div class="panel-head"><span class="panel-title">IOC timeline</span>'+
+      '<span class="panel-sub">'+pts.length+' indicator'+(pts.length===1?'':'s')+' across '+f.nHosts+' host'+(f.nHosts===1?'':'s')+', in the order observed, over '+dur(hi-lo)+'.</span></div>'+
+      '<div class="panel-body">'+rows+
+        (undated?'<div style="font-size:11.5px;color:var(--warn-text);margin-top:14px">'+
+          undated+' indicator'+(undated===1?'':'s')+' carr'+(undated===1?'ies':'y')+' no timestamp and '+(undated===1?'is':'are')+' not shown.</div>':'')+
+      '</div>'+
+    '</div>';
+}
+
+/* ══════════════ VIEW 4 — TECHNIQUES ══════════════ */
+function viewTechniques(f){
+  var present=TACTIC_ORDER.filter(function(t){return f.tactics[t];});
+  if(!present.length)return caseHeader(f)+'<div class="panel"><div class="empty">No techniques tagged. Add MITRE ATT&amp;CK techniques to IOCs in TRACE to build this view.</div></div>';
+  var max=Math.max.apply(null,present.map(function(t){return f.tactics[t];}));
+
+  var rows=present.map(function(t){
+    var n=f.tactics[t],pct=n/max*100;
+    var techs={};
+    f.iocs.filter(function(i){return i.mitreTactic===t&&i.mitreId;}).forEach(function(i){techs[i.mitreId]=1;});
+    var ids=Object.keys(techs).sort();
+    return '<tr>'+
+      '<td style="width:22%"><span style="font-weight:600;font-size:12.5px">'+esc(TACTIC_SHORT[t]||t)+'</span></td>'+
+      '<td style="width:34%"><div style="display:flex;align-items:center;gap:9px">'+
+        '<div style="flex:1;height:9px;background:var(--bg3);border-radius:5px;overflow:hidden">'+
+          '<div style="width:'+pct+'%;height:100%;background:var(--accent);border-radius:5px"></div></div>'+
+        '<span class="mono" style="font-size:11px;color:var(--text3);min-width:18px">'+n+'</span></div></td>'+
+      '<td>'+ids.map(function(id){
+        return '<a href="https://attack.mitre.org/techniques/'+encodeURIComponent(id.replace('.','/'))+'/" target="_blank" rel="noopener" '+
+          'class="chip mono" style="background:var(--bg3);color:var(--accent);text-decoration:none;margin:2px 3px 2px 0">'+esc(id)+'</a>';
+      }).join('')+'</td></tr>';
+  }).join('');
+
+  /* coverage strip across all 14 tactics */
+  var strip=TACTIC_ORDER.map(function(t){
+    var on=!!f.tactics[t];
+    return '<div style="flex:1;min-width:64px;padding:9px 6px;text-align:center;border-radius:var(--radius);'+
+      'background:'+(on?'var(--accent)':'var(--bg3)')+';color:'+(on?'#fff':'var(--text3)')+';'+
+      'font-family:var(--mono);font-size:9px;font-weight:600;line-height:1.3">'+
+      esc(TACTIC_SHORT[t]||t)+(on?'<div style="font-size:12px;margin-top:3px">'+f.tactics[t]+'</div>':'<div style="font-size:12px;margin-top:3px;opacity:.4">·</div>')+
+      '</div>';
+  }).join('');
+
+  return caseHeader(f)+
+    '<div class="panel">'+
+      '<div class="panel-head"><span class="panel-title">Kill-chain coverage</span>'+
+      '<span class="panel-sub">All 14 ATT&amp;CK Enterprise tactics. Highlighted stages were observed in this incident.</span></div>'+
+      '<div class="panel-body"><div style="display:flex;gap:4px;flex-wrap:wrap">'+strip+'</div></div>'+
+    '</div>'+
+    '<div class="panel">'+
+      '<div class="panel-head"><span class="panel-title">Techniques by tactic</span>'+
+      '<span class="panel-sub">Technique IDs link to the MITRE ATT&amp;CK knowledge base.</span></div>'+
+      '<div class="panel-body"><table><thead><tr><th>Tactic</th><th>Indicators</th><th>Techniques observed</th></tr></thead>'+
+      '<tbody>'+rows+'</tbody></table></div>'+
+    '</div>';
+}
+
+/* ══════════════ TOOLTIP ══════════════ */
+function showTip(e,label,sub,ts){
+  var t=document.getElementById('tip');
+  t.innerHTML='<div class="mono" style="font-size:10.5px;color:var(--text3);margin-bottom:3px">'+ts+'</div>'+
+    '<div style="font-weight:600;margin-bottom:2px">'+label+'</div>'+
+    '<div style="font-size:11.5px;color:var(--text2)">'+sub+'</div>';
+  t.classList.add('on');
+  var w=t.offsetWidth,h=t.offsetHeight;
+  var x=e.clientX+14; if(x+w>window.innerWidth-8)x=e.clientX-w-14;
+  var y=e.clientY-10; if(y+h>window.innerHeight-8)y=window.innerHeight-h-8;
+  t.style.left=Math.max(8,x)+'px'; t.style.top=Math.max(8,y)+'px';
+}
+function hideTip(){document.getElementById('tip').classList.remove('on');}
+</script>
+</body>
+</html>
