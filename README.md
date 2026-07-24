@@ -10,7 +10,6 @@ TRACE helps incident responders manage the full lifecycle of a security incident
 
 ## Contents
 
-- [What's new](#whats-new)
 - [Why TRACE](#why-trace)
 - [Quick start](#quick-start)
 - [Sample cases](#sample-cases)
@@ -24,44 +23,11 @@ TRACE helps incident responders manage the full lifecycle of a security incident
 - [Browser support](#browser-support)
 - [File structure](#file-structure)
 - [FAQ](#faq)
+- [What's new](#whats-new)
 - [Disclaimer](#disclaimer)
 
 ---
 
-## What's new
-
-### TRACE Brief — a companion briefing tool
-
-A second single-file tool, **`trace-brief.html`**, turns a finished case into something you can put in front of a management audience. Drop in the same `.json` you already save from TRACE and it builds five briefing views, ordered as a briefing runs: a key-facts infographic, an attack progression along the ATT&CK kill chain, a full chronological IOC timeline with narrative, host swimlanes and a technique breakdown. Same offline model, same three themes. See [TRACE Brief](#trace-brief--post-incident-briefing).
-
-### Reporting & exports
-
-- **Dedicated Reports tab.** Reporting is now a first-class section on the main menu bar rather than being buried in a submenu. All four export types — incident report, CSV, STIX 2.1 and ATT&CK Navigator — sit together as cards showing what each one contains (`13 indicators`, `38 records`, and so on).
-- **Choose what goes in the report.** Pick exactly which sections to include; the header summary, key timestamps, governance snapshot and incident narrative are always present. Section numbering renumbers itself so there are never gaps. A live preview updates as you change the selection.
-- **Readable in every theme.** The report preview renders on white regardless of whether you're in Midnight, Daybreak or Console.
-
-### IOC handling
-
-- **Automatic defanging.** Live indicators are neutralised wherever a human reads them — in the app, the incident report and the CSV export (`185[.]220[.]101[.]47`, `hxxps://`). Hashes, filenames and account names are left alone. STIX exports keep raw values, since they must stay machine-parseable.
-- **Host-aware duplicate detection.** Adding an indicator already logged *on the same host* prompts a warning. The same indicator on a *different* host is kept, because that's a distinct and forensically meaningful sighting.
-- **Search and filter.** Filter IOCs and evidence by value, type, host, MITRE ID or notes, with a live match count.
-- **Observed-at times.** Each IOC records when it was *seen*, separate from when it was logged, so the timeline reflects reality rather than data-entry order.
-- **View by host.** Group indicators by the system they were seen on, sorted earliest-first for a per-host mini-timeline.
-- **Full 14-tactic ATT&CK coverage**, including Reconnaissance and Resource Development, with exports pinned to the current ATT&CK version.
-
-### Data integrity
-
-- **Delete confirmation** on every record, naming what's about to be removed.
-- **No orphaned custody records.** Deleting an evidence item that has chain-of-custody entries attached warns you and removes those entries too, so the custody chain never references evidence that no longer exists.
-
-### Interface
-
-- **Three themes** — Midnight (dark navy, default), Daybreak (warm parchment) and Console (terminal green).
-- **Incident milestones on the timeline.** Detected, reported, contained and resolved appear as timeline events, so containment — the dwell-time boundary — is visible where it matters.
-- **Editable timestamps from the dashboard.** Click any entry in the timestamp strip to set or change it inline.
-- **Two sample cases** to load and explore (see below).
-
----
 
 ## Why TRACE
 
@@ -333,6 +299,41 @@ That's defanging — it stops live indicators being clicked accidentally or deto
 
 **Which browser should I use?**
 Chrome or Edge for the full experience (including workspace auto-save). Others work with manual save/load.
+
+---
+
+## What's new
+
+### TRACE Brief — a companion briefing tool
+
+A second single-file tool, **`trace-brief.html`**, turns a finished case into something you can put in front of a management audience. Drop in the same `.json` you already save from TRACE and it builds five briefing views, ordered as a briefing runs: a key-facts infographic, an attack progression along the ATT&CK kill chain, a full chronological IOC timeline with narrative, host swimlanes and a technique breakdown. Same offline model, same three themes. See [TRACE Brief](#trace-brief--post-incident-briefing).
+
+### Reporting & exports
+
+- **Dedicated Reports tab.** Reporting is now a first-class section on the main menu bar rather than being buried in a submenu. All four export types — incident report, CSV, STIX 2.1 and ATT&CK Navigator — sit together as cards showing what each one contains (`13 indicators`, `38 records`, and so on).
+- **Choose what goes in the report.** Pick exactly which sections to include; the header summary, key timestamps, governance snapshot and incident narrative are always present. Section numbering renumbers itself so there are never gaps. A live preview updates as you change the selection.
+- **Readable in every theme.** The report preview renders on white regardless of whether you're in Midnight, Daybreak or Console.
+
+### IOC handling
+
+- **Automatic defanging.** Live indicators are neutralised wherever a human reads them — in the app, the incident report and the CSV export (`185[.]220[.]101[.]47`, `hxxps://`). Hashes, filenames and account names are left alone. STIX exports keep raw values, since they must stay machine-parseable.
+- **Host-aware duplicate detection.** Adding an indicator already logged *on the same host* prompts a warning. The same indicator on a *different* host is kept, because that's a distinct and forensically meaningful sighting.
+- **Search and filter.** Filter IOCs and evidence by value, type, host, MITRE ID or notes, with a live match count.
+- **Observed-at times.** Each IOC records when it was *seen*, separate from when it was logged, so the timeline reflects reality rather than data-entry order.
+- **View by host.** Group indicators by the system they were seen on, sorted earliest-first for a per-host mini-timeline.
+- **Full 14-tactic ATT&CK coverage**, including Reconnaissance and Resource Development, with exports pinned to the current ATT&CK version.
+
+### Data integrity
+
+- **Delete confirmation** on every record, naming what's about to be removed.
+- **No orphaned custody records.** Deleting an evidence item that has chain-of-custody entries attached warns you and removes those entries too, so the custody chain never references evidence that no longer exists.
+
+### Interface
+
+- **Three themes** — Midnight (dark navy, default), Daybreak (warm parchment) and Console (terminal green).
+- **Incident milestones on the timeline.** Detected, reported, contained and resolved appear as timeline events, so containment — the dwell-time boundary — is visible where it matters.
+- **Editable timestamps from the dashboard.** Click any entry in the timestamp strip to set or change it inline.
+- **Two sample cases** to load and explore (see below).
 
 ---
 
