@@ -40,10 +40,6 @@ A dedicated **Host analysis** tab. For each host or log source, an analyst recor
 
 **The Gentlemen** ransomware via a compromised MSP RMM tool — a novel supply-chain-adjacent intrusion vector, closed with full host analysis, lessons learned, and TTPs grounded in real-world reporting. See [Sample cases](#sample-cases).
 
-### Companion tools
-
-TRACE now sits in a small toolchain: **TRACE Brief** turns a finished case into a management briefing, and the **MFIRfinder → TRACE converter** brings validated findings from an MFIRfinder investigation straight into a case. See [Companion tools](#companion-tools).
-
 ### Reporting, IOC handling & integrity
 
 - Section-configurable incident report (PDF / HTML) with live preview, plus CSV, STIX 2.1 and ATT&CK Navigator export
@@ -255,14 +251,6 @@ The CSV export uses proper quoting/escaping and a UTF-8 byte-order mark so it op
 Working an incident and explaining one are different jobs. **TRACE Brief** turns a finished case into a management briefing — visual and narrative-led, for an executive, a board, a client, a regulator or a lessons-learned session.
 
 Drop in a case `.json` saved from TRACE and it builds six ordered views: an **executive summary** (verdict, impact, dwell time, what's outstanding), a **key-facts** infographic, an **attack progression** along the ATT&CK kill chain, an **IOC timeline**, **host swimlanes**, and a **techniques** breakdown. It only reads the file — it never writes back, so it's safe to hand to someone outside the response team. Metrics like dwell time are derived from the case data, not re-entered. Same offline model and three themes as TRACE.
-
-### MFIRfinder → TRACE converter (`mfir-to-trace.html`)
-
-Brings validated findings from an MFIRfinder investigation into a TRACE case. Drop in a `findings-<case>.json` or a `validated-<case>.csv` exported from MFIRfinder's report, and it maps each finding to a TRACE indicator — atomic IOCs (hashes, IPs, domains, filenames) where present, behavioural detail otherwise. It carries the MITRE technique, tactic, host, timestamp and confidence across, dedupes host-aware, and shows a review screen before you commit. Export as a **new case**, or **merge into an existing case** you load into the converter (matching the case exactly and skipping anything already present).
-
-### Workflow diagram (`trace-workflow.html`)
-
-A one-page visual walkthrough of the end-to-end process, from data collection through parsing, validation, ingestion, case management and reporting, to the final briefing.
 
 ---
 
