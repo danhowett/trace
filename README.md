@@ -21,7 +21,7 @@ TRACE helps incident responders manage the full lifecycle of a security incident
 - [Saving your work](#saving-your-work)
 - [Working as a team](#working-as-a-team)
 - [Exports & integrations](#exports--integrations)
-- [Companion tools](#companion-tools)
+- [Companion tool](#companion-tool)
 - [Themes](#themes)
 - [Browser support](#browser-support)
 - [File structure](#file-structure)
@@ -40,6 +40,10 @@ A dedicated **Host analysis** tab. For each host or log source, an analyst recor
 
 **The Gentlemen** ransomware via a compromised MSP RMM tool — a novel supply-chain-adjacent intrusion vector, closed with full host analysis, lessons learned, and TTPs grounded in real-world reporting. See [Sample cases](#sample-cases).
 
+### Companion tool
+
+TRACE now has a companion, **TRACE Brief**, which turns a finished case into a visual management briefing. See [Companion tool](#companion-tool).
+
 ### Reporting, IOC handling & integrity
 
 - Section-configurable incident report (PDF / HTML) with live preview, plus CSV, STIX 2.1 and ATT&CK Navigator export
@@ -52,16 +56,14 @@ A dedicated **Host analysis** tab. For each host or log source, an analyst recor
 
 ## The toolkit
 
-TRACE is the case-management hub of a small, offline DFIR toolchain. Each piece is a single self-contained HTML file.
+TRACE is the case-management hub, paired with a briefing companion. Both are single self-contained HTML files that run entirely offline.
 
 | Tool | File | Role |
 |---|---|---|
 | **TRACE** | `TRACE-CMS.html` | The incident case-management system — the hub. |
 | **TRACE Brief** | `trace-brief.html` | Turns a finished case into a visual management briefing. |
-| **MFIRfinder → TRACE** | `mfir-to-trace.html` | Converts validated MFIRfinder findings into TRACE indicators. |
-| **Workflow** | `trace-workflow.html` | A visual walkthrough of the end-to-end process. |
 
-The end-to-end flow: an incident is identified and a **case opened in TRACE**; host data is collected and parsed (e.g. with Magnet Collector and MFIRfinder), findings are validated and brought in through the **converter**; the case is worked and closed in TRACE; the formal **report** is produced; and the incident is briefed to leadership in **TRACE Brief**.
+The flow: an incident is identified and a **case opened in TRACE**; evidence, indicators, per-host analysis and decisions are logged as the response runs; the case is worked and closed; the formal **report** is produced; and the incident is briefed to leadership in **TRACE Brief**.
 
 ---
 
@@ -244,7 +246,7 @@ The CSV export uses proper quoting/escaping and a UTF-8 byte-order mark so it op
 
 ---
 
-## Companion tools
+## Companion tool
 
 ### TRACE Brief — post-incident briefing (`trace-brief.html`)
 
@@ -271,7 +273,7 @@ TRACE works in any modern browser, but a few features rely on the **File System 
 - **Connect workspace** (continuous auto-save to a disk file) requires a **Chromium-based browser** (Chrome or Edge).
 - In browsers without this API (Firefox, Safari), TRACE still works fully — it falls back to browser storage plus manual **Save to file** / **Load file**.
 
-Everything else — all tabs, exports, themes, merge, the sample cases, and all companion tools — works everywhere.
+Everything else — all tabs, exports, themes, merge, the sample cases, and TRACE Brief — works everywhere.
 
 ---
 
@@ -281,8 +283,6 @@ Everything else — all tabs, exports, themes, merge, the sample cases, and all 
 |---|---|
 | `TRACE-CMS.html` | The main application — a single self-contained HTML file. This is all you need to run TRACE. |
 | `trace-brief.html` | The briefing companion — turns a saved case into management-facing visuals. |
-| `mfir-to-trace.html` | Converter — turns validated MFIRfinder findings into a TRACE case. |
-| `trace-workflow.html` | A visual walkthrough of the end-to-end process. |
 | `trace-sample-case.json` | Sample 1 — Akira ransomware, critical, in progress. |
 | `trace-sample-case-bec.json` | Sample 2 — business email compromise, high, closed. |
 | `trace-sample-case-apt.json` | Sample 3 — living-off-the-land espionage, critical, closed. |
@@ -341,4 +341,4 @@ Because they store data in your browser and in local files that **you** are resp
 
 ## Usage & distribution
 
-TRACE and its companion tools are free to use and free to share. You may download, use, copy, and distribute them at no charge, including within your organisation and to others, provided they remain **free of charge** and this notice and the accompanying disclaimers are kept intact. You may **not sell, resell, license for a fee, or otherwise commercialise** any of the tools, or any substantially unmodified version of them, whether on their own or bundled as part of a paid product or service. If you share them, share them freely.
+TRACE and TRACE Brief are free to use and free to share. You may download, use, copy, and distribute them at no charge, including within your organisation and to others, provided they remain **free of charge** and this notice and the accompanying disclaimers are kept intact. You may **not sell, resell, license for a fee, or otherwise commercialise** either tool, or any substantially unmodified version of them, whether on their own or bundled as part of a paid product or service. If you share them, share them freely.
