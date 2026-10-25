@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TRACE Brief — Interim (Situation Report)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%230d1524'/%3E%3Cpath d='M6 27 L13 27 L20 12 L27 22 L34 22' stroke='%234a9eff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ccircle cx='20' cy='12' r='4' fill='%234a9eff'/%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1524;--bg2:#151f34;--bg3:#243450;
+  --text:#eef2f8;--text2:#aebdd2;--text3:#7787a0;
+  --border:#2a3a5a;--border2:#42557d;
+  --info-bg:#14304f;--info-text:#6fb2ff;
+  --warn-bg:#3d2d10;--warn-text:#f8bd52;
+  --danger-bg:#421826;--danger-text:#ff7d8d;
+  --success-bg:#153a24;--success-text:#5cd98a;
+  --accent:#4a9eff;--accent-hover:#6cb0ff;
+  --field:#0f1a2e;
+  --radius:6px;--radius-lg:9px;
+  --shadow:0 1px 3px rgba(0,0,0,0.35),0 4px 16px rgba(0,0,0,0.28);
+  --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f7f4ec;--bg2:#fbf9f3;--bg3:#efe9dc;
+  --text:#2e3a3a;--text2:#5b6a68;--text3:#8a938c;
+  --border:#e4ddcd;--border2:#cbc3b0;
+  --info-bg:#e2ecf1;--info-text:#2c6a8f;
+  --warn-bg:#f6ecd4;--warn-text:#9a6f1e;
+  --danger-bg:#f4e0dc;--danger-text:#b04a3a;
+  --success-bg:#e4ecd9;--success-text:#5a7a3a;
+  --accent:#3a7ca5;--accent-hover:#2f6a8f;
+  --field:#fffdf8;
+  --shadow:0 1px 3px rgba(70,60,40,0.06),0 4px 14px rgba(70,60,40,0.05);
+}
+[data-theme="console"]{
+  --bg:#0a0f0a;--bg2:#0d140d;--bg3:#111a11;
+  --text:#00ff41;--text2:#00cc33;--text3:#007a1f;
+  --border:#003d0f;--border2:#005c17;
+  --info-bg:#001a0a;--info-text:#00ff41;
+  --warn-bg:#1a1200;--warn-text:#ffd700;
+  --danger-bg:#1a1000;--danger-text:#ffaa00;
+  --success-bg:#001a05;--success-text:#00ff41;
+  --accent:#00ff41;--accent-hover:#00ff41;
+  --field:#0a0f0a;
+  --mono:'JetBrains Mono','Courier New',monospace;
+  --sans:'JetBrains Mono','Courier New',monospace;
+  --radius:2px;--radius-lg:3px;
+}
+body{font-family:var(--sans);font-size:14px;color:var(--text);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{display:flex;align-items:center;gap:14px;padding:16px 22px;background:var(--bg2);border-bottom:1px solid var(--border);flex-wrap:wrap;position:sticky;top:0;z-index:50}
+.brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.brand-wordmark{font-family:var(--mono);font-size:17px;font-weight:600;letter-spacing:0.16em;text-indent:0.16em;color:var(--text)}
+.brand-sub{font-size:8.5px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;font-weight:500;margin-top:3px}
+.topbar-spacer{flex:1}
+button{padding:8px 14px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg3);color:var(--text);font-size:13px;font-weight:500;font-family:var(--sans);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .12s,border-color .12s}
+button:hover:not(:disabled){background:var(--border);border-color:var(--accent)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+button.primary:hover:not(:disabled){background:var(--accent-hover);border-color:var(--accent-hover)}
+button.sm{font-size:12px;padding:5px 10px}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 22px 60px}
+.drop{border:2px dashed var(--border2);border-radius:var(--radius-lg);padding:54px 28px;text-align:center;background:var(--bg2);transition:all .16s}
+.drop.over{border-color:var(--accent);background:var(--info-bg)}
+.drop h2{font-size:19px;font-weight:600;margin-bottom:7px}
+.drop p{color:var(--text3);font-size:13px;line-height:1.6;max-width:560px;margin:0 auto 18px}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:16px}
+.panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;flex-wrap:wrap}
+.panel-title{font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text2)}
+.panel-sub{font-size:11.5px;color:var(--text3)}
+.panel-body{margin-top:14px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;white-space:nowrap;font-family:var(--mono)}
+.chip-lg{font-size:12px;padding:5px 12px}
+.mono{font-family:var(--mono)}
+.hidden{display:none!important}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px;padding:11px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg)}
+.ctl-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono)}
+.seg{display:inline-flex;border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden}
+.seg button{border:none;border-radius:0;font-size:12px;padding:6px 12px;background:var(--bg3);color:var(--text2)}
+.seg button.on{background:var(--accent);color:#fff;font-weight:600}
+input[type=datetime-local]{padding:6px 9px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--field);color:var(--text);font-size:12px;font-family:var(--mono)}
+[data-theme=""] input[type=datetime-local]{color-scheme:dark}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:10px 16px;border-radius:var(--radius-lg);font-size:12.5px;box-shadow:var(--shadow);z-index:300;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}
+.toast.on{opacity:1}
+.tip{position:fixed;z-index:200;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:9px 13px;font-size:12px;box-shadow:var(--shadow);pointer-events:none;display:none;max-width:300px;line-height:1.5}
+@media print{.topbar,.controls,.no-print{display:none!important}body{background:#fff;color:#111}.panel{break-inside:avoid;background:#fff;border-color:#ddd}.wrap{max-width:none;padding:0}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+      <path d="M5 27 L13 27 L20 12 L27 22 L35 22" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="13" cy="27" r="3.3" fill="var(--bg2)" stroke="var(--text)" stroke-width="2.1"/>
+      <circle cx="20" cy="12" r="3.3" fill="var(--bg2)" stroke="var(--text)" stroke-width="2.1"/>
+      <circle cx="27" cy="22" r="3.3" fill="var(--accent)"/>
+    </svg>
+    <div>
+      <div class="brand-wordmark">BRIEF</div>
+      <div class="brand-sub">Interim &middot; Situation Report</div>
+    </div>
+  </div>
+  <div class="topbar-spacer"></div>
+  <span id="case-tag" class="chip hidden"></span>
+  <button class="sm" onclick="pickFile()">&#8613; Load case</button>
+  <button class="sm" onclick="window.print()" id="btn-print" disabled>&#9113; Print / PDF</button>
+  <button class="sm" onclick="cycleTheme()" id="theme-btn">&#9681; Midnight</button>
+</div>
+
+<div class="wrap">
+  <div id="landing">
+    <div class="drop" id="drop">
+      <h2>Drop a TRACE case file here</h2>
+      <p>Load a case <code>.json</code> saved from TRACE to generate an interim situation report &mdash; where the investigation stands now, and everything that changed in the last 24 hours. Runs entirely in your browser; nothing is uploaded.</p>
+      <button class="primary" onclick="pickFile()">Choose file</button>
+      <div style="margin-top:16px;font-size:11.5px;color:var(--text3)">This is a live status update, not the final report. Use the full TRACE Brief for post-incident.</div>
+    </div>
+  </div>
+
+  <div id="picker" class="hidden">
+    <div class="panel"><div class="panel-head"><span class="panel-title">Choose a case</span></div><div class="panel-body" id="picker-list"></div></div>
+  </div>
+
+  <div id="report" class="hidden">
+    <div class="controls no-print">
+      <span class="ctl-label">As&nbsp;of</span>
+      <input type="datetime-local" id="asof" onchange="setAsOf(this.value)">
+      <button class="sm" onclick="setAsOfNow()">Now</button>
+      <span style="width:1px;height:20px;background:var(--border)"></span>
+      <span class="ctl-label">Window</span>
+      <div class="seg" id="winseg"></div>
+      <span id="sinceWrap" class="hidden" style="display:inline-flex;align-items:center;gap:8px">
+        <span class="ctl-label">Since</span>
+        <input type="datetime-local" id="since" onchange="setSince(this.value)">
+      </span>
+      <div style="flex:1"></div>
+      <button class="sm" onclick="markBriefed()" title="Remember this as-of time as the last brief, so the next brief can compare since then">&#10003; Mark briefed</button>
+      <button class="sm" onclick="toggleText()">&#128203; Copy as text</button>
+      <span class="ctl-label hidden" id="scope-note"></span>
+    </div>
+    <div id="textpanel" class="panel no-print hidden">
+      <div class="panel-head"><span class="panel-title">Plain-text SITREP</span>
+      <span class="panel-sub">For Slack, Teams or email. Edit before sending if you like.</span></div>
+      <div class="panel-body">
+        <textarea id="sitrep-text" spellcheck="false" oninput="TEXT_DIRTY=true" style="width:100%;min-height:280px;padding:12px 14px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--field);color:var(--text);font-family:var(--mono);font-size:12px;line-height:1.55;resize:vertical"></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
+          <button class="primary sm" onclick="copyText()">Copy to clipboard</button>
+          <button class="sm" onclick="toggleText()">Close</button>
+          <span id="copy-msg" style="font-size:11.5px;color:var(--success-text)"></span>
+        </div>
+      </div>
+    </div>
+    <div id="views"></div>
+  </div>
+</div>
+
+<div class="tip" id="tip"></div>
+<div class="toast no-print" id="toast"></div>
+<input type="file" id="fileinput" accept=".json,application/json" style="display:none">
+
+<script>
+/* ══════════════ THEME ══════════════ */
+var THEMES=['','light','console'], LABELS={'':'\u25D1 Midnight','light':'\u25D1 Daybreak','console':'\u25D1 Console'};
+function applyTheme(t){
+  var r=document.documentElement;
+  if(t)r.setAttribute('data-theme',t); else r.removeAttribute('data-theme');
+  document.getElementById('theme-btn').textContent=LABELS[t]||LABELS[''];
+  try{localStorage.setItem('trace-interim-theme',t);}catch(e){}
+  if(CASE)render();
+}
+function cycleTheme(){var cur=document.documentElement.getAttribute('data-theme')||'';applyTheme(THEMES[(THEMES.indexOf(cur)+1)%THEMES.length]);}
+(function(){var s=null;try{s=localStorage.getItem('trace-interim-theme');}catch(e){}applyTheme(s||'');})();
+
+/* ══════════════ STATE ══════════════ */
+var CASE=null, LOADED=null;
+var AS_OF=null;         /* Date — the "as of" anchor */
+var WINDOW_H=24;        /* hours */
+var WINDOW_MODE='hours';/* 'hours' = last N hours; 'since' = since a chosen time */
+var SINCE=null;         /* Date — start of the window when WINDOW_MODE==='since' */
+var LAST_BRIEF=null;    /* Date — when this case was last marked as briefed (per case, remembered locally) */
+var TEXT_DIRTY=false;   /* true once the plain-text panel has been hand-edited */
+var TYPE_META={
+  milestone:{col:'#64748b',label:'Milestone'},evidence:{col:'#378ADD',label:'Evidence'},
+  custody:{col:'#BA7517',label:'Custody'},ioc:{col:'#D85A30',label:'Indicator'},
+  action:{col:'#639922',label:'Action'},escalation:{col:'#993556',label:'Escalation'},
+  notification:{col:'#534AB7',label:'Notification'},host:{col:'#16a085',label:'Host analysis'}
+};
+
+/* ══════════════ UTIL ══════════════ */
+function esc(s){return String(s==null?'':s).replace(/[<>&"]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});}
+function pd(s){if(!s)return null;var m=String(s).match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);if(m)return new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5]);var d=new Date(s);return isNaN(d)?null:d;}
+function pdz(s){if(!s)return null;var d=new Date(s);return isNaN(d)?null:d;} /* parse with tz (for addedAt ISO stamps) */
+function p2(n){return n<10?'0'+n:''+n;}
+function fmtDT(s){var d=(s instanceof Date)?s:pd(s);if(!d)return '\u2014';return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes());}
+function fmtTime(d){return p2(d.getHours())+':'+p2(d.getMinutes());}
+function fmtDayTime(d){var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return d.getDate()+' '+mo[d.getMonth()]+' '+fmtTime(d);}
+function dur(ms){if(ms==null||ms<0)return '\u2014';var m=Math.floor(ms/60000),h=Math.floor(m/60),d=Math.floor(h/24);if(d>0)return d+'d '+(h%24)+'h';if(h>0)return h+'h '+(m%60)+'m';return m+'m';}
+function toLocalInput(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+'T'+p2(d.getHours())+':'+p2(d.getMinutes());}
+function defang(v,t){if(!v)return '';var s=String(v);if(t==='ipv4')return s.replace(/\.(?=\d)/g,'[.]');if(t==='ipv6')return s.replace(/:/g,'[:]');if(t==='domain')return s.replace(/\./g,'[.]');if(t==='url')return s.replace(/^http:/i,'hxxp:').replace(/^https:/i,'hxxps:').replace(/\./g,'[.]');if(t==='email')return s.replace(/@/g,'[@]').replace(/\./g,'[.]');return s;}
+function iocVal(i){return ['ipv4','ipv6','domain','url','email'].indexOf(i.type)>-1?defang(i.value,i.type):(i.value||'');}
+function iocTime(i){return i.observedAt||i.addedAt;}
+function host(i){return (i.source||'').trim()||'Unattributed';}
+
+/* best-effort "when was this record touched" — for the 24h window.
+   Prefers explicit action times, else the addedAt/editedAt stamp. */
+function recTime(rec, kind){
+  var t;
+  if(kind==='ioc') t=rec.observedAt||rec.addedAt;
+  else if(kind==='evidence') t=rec.collectedAt||rec.addedAt;
+  else if(kind==='custody') t=rec.timestamp||rec.addedAt;
+  else if(kind==='action') t=rec.completedAt||rec.editedAt||rec.addedAt||rec.createdAt;
+  else if(kind==='escalation') t=rec.timestamp||rec.addedAt;
+  else if(kind==='notification') t=rec.sentAt||rec.addedAt;
+  else if(kind==='host') t=rec.editedAt||rec.addedAt;
+  else t=rec.editedAt||rec.addedAt||rec.timestamp;
+  return pdz(t)||pd(t);
+}
+
+/* ══════════════ FILE LOADING ══════════════ */
+function pickFile(){document.getElementById('fileinput').click();}
+document.getElementById('fileinput').addEventListener('change',function(e){if(e.target.files[0])readFile(e.target.files[0]);e.target.value='';});
+var dz=document.getElementById('drop');
+['dragenter','dragover'].forEach(function(ev){document.addEventListener(ev,function(e){e.preventDefault();dz&&dz.classList.add('over');});});
+['dragleave','drop'].forEach(function(ev){document.addEventListener(ev,function(e){e.preventDefault();if(ev==='drop'&&e.dataTransfer.files[0])readFile(e.dataTransfer.files[0]);dz&&dz.classList.remove('over');});});
+function readFile(f){
+  var r=new FileReader();
+  r.onload=function(ev){
+    var d;try{d=JSON.parse(ev.target.result);}catch(err){alert('That file isn\u2019t valid JSON.');return;}
+    if(!d||!d.cases||typeof d.cases!=='object'){alert('That doesn\u2019t look like a TRACE case file.');return;}
+    LOADED=d;var keys=Object.keys(d.cases);
+    if(!keys.length){alert('No cases in that file.');return;}
+    if(keys.length===1)openCase(keys[0]);else showPicker(keys);
+  };
+  r.readAsText(f);
+}
+function showPicker(keys){
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('report').classList.add('hidden');
+  document.getElementById('picker').classList.remove('hidden');
+  document.getElementById('picker-list').innerHTML=keys.map(function(k){
+    var c=LOADED.cases[k],m=c.meta||{};
+    return '<div onclick="openCase(\''+k+'\')" style="padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;background:var(--bg)" onmouseover="this.style.borderColor=\'var(--accent)\'" onmouseout="this.style.borderColor=\'var(--border)\'">'+
+      '<div class="mono" style="color:var(--text3);font-size:10.5px">'+esc(m.id||k)+'</div>'+
+      '<div style="font-weight:600;margin:3px 0">'+esc(m.title||'Untitled')+'</div>'+
+      '<div style="font-size:11.5px;color:var(--text3)">'+esc(m.severity||'')+' \u00b7 '+esc(m.status||'')+' \u00b7 '+((c.iocs||[]).length)+' IOCs</div></div>';
+  }).join('');
+}
+function lbKey(){return 'trace-interim-lastbrief:'+((CASE&&CASE.meta&&CASE.meta.id)||'case');}
+function loadLastBrief(){try{var v=localStorage.getItem(lbKey());if(v){var d=new Date(parseInt(v,10));if(!isNaN(d))return d;}}catch(e){}return null;}
+function saveLastBrief(){try{localStorage.setItem(lbKey(),String(+LAST_BRIEF));}catch(e){}}
+function openCase(k){
+  CASE=LOADED.cases[k];
+  /* fresh per-case state — otherwise the previous case's as-of time would carry over */
+  AS_OF=null;WINDOW_MODE='hours';SINCE=null;TEXT_DIRTY=false;LAST_BRIEF=loadLastBrief();
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('picker').classList.add('hidden');
+  document.getElementById('report').classList.remove('hidden');
+  document.getElementById('btn-print').disabled=false;
+  var tag=document.getElementById('case-tag'),m=CASE.meta||{};
+  tag.className='chip';tag.style.background='var(--info-bg)';tag.style.color='var(--info-text)';
+  tag.textContent=(m.id||'')+' \u00b7 '+(m.severity||'');
+  /* default AS_OF: latest activity in the case, else now (so a saved case briefs correctly) */
+  if(!AS_OF){
+    var latest=latestActivity();
+    AS_OF=latest||new Date();
+  }
+  document.getElementById('asof').value=toLocalInput(AS_OF);
+  render();
+}
+function latestActivity(){
+  var all=allActivity(new Date(8640000000000000));
+  if(!all.length)return null;
+  return all[all.length-1].d;
+}
+
+/* ══════════════ CONTROLS ══════════════ */
+function setAsOf(v){var d=pd(v);if(d){AS_OF=d;render();}}
+function setAsOfNow(){AS_OF=new Date();document.getElementById('asof').value=toLocalInput(AS_OF);render();}
+function setWindow(h){WINDOW_H=h;WINDOW_MODE='hours';render();}
+function setSinceMode(){
+  WINDOW_MODE='since';
+  /* if a last-brief time exists (and is before the as-of), compare against it; else default to 24h back */
+  if(LAST_BRIEF&&LAST_BRIEF<AS_OF)SINCE=LAST_BRIEF;
+  else if(!SINCE)SINCE=new Date(+AS_OF-24*3600000);
+  render();
+}
+function setSince(v){var d=pd(v);if(d){SINCE=d;WINDOW_MODE='since';render();}}
+function markBriefed(){
+  LAST_BRIEF=AS_OF;saveLastBrief();
+  toast('Marked as briefed at '+fmtDT(AS_OF)+'. Next time, use \u201cSince last brief\u201d.');
+  render();
+}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('on');},3200);}
+function toggleText(){
+  var p=document.getElementById('textpanel');
+  if(p.classList.contains('hidden')){p.classList.remove('hidden');TEXT_DIRTY=false;document.getElementById('sitrep-text').value=sitrepText(situation());}
+  else p.classList.add('hidden');
+}
+function copyText(){
+  var ta=document.getElementById('sitrep-text'),msg=document.getElementById('copy-msg');
+  function ok(){msg.textContent='Copied to clipboard';setTimeout(function(){msg.textContent='';},2500);}
+  function fallback(){ta.focus();ta.select();try{if(document.execCommand('copy'))ok();else msg.textContent='Press Ctrl/Cmd+C to copy';}catch(e){msg.textContent='Press Ctrl/Cmd+C to copy';}}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value).then(ok,fallback);}else fallback();
+}
+
+/* Window helpers — labels stay correct whether the window is "last Nh" or "since <time>" */
+function windowStartFor(asOf){return (WINDOW_MODE==='since'&&SINCE)?SINCE:new Date(+asOf-WINDOW_H*3600000);}
+function windowPhrase(){return (WINDOW_MODE==='since'&&SINCE)?'since '+fmtDayTime(SINCE):'in the last '+WINDOW_H+'h';}
+function windowTitle(){return (WINDOW_MODE==='since'&&SINCE)?'Since '+fmtDayTime(SINCE):'Last '+WINDOW_H+' hours';}
+function windowShort(){return (WINDOW_MODE==='since'&&SINCE)?'since '+fmtTime(SINCE):'in last '+WINDOW_H+'h';}
+
+/* ══════════════ ACTIVITY MODEL ══════════════ */
+/* Every timestamped change in the case, up to the as-of moment. */
+function allActivity(asOf){
+  var ev=[],m=CASE.meta||{};
+  function add(d,type,label,sub,extra){if(d&&d<=asOf)ev.push(Object.assign({d:d,type:type,label:label,sub:sub||''},extra||{}));}
+  /* milestones */
+  add(pd(m.detectedAt),'milestone','Incident detected','Dwell-time clock stopped');
+  add(pd(m.reportedAt),'milestone','Reported / escalated','');
+  add(pd(m.containedAt),'milestone','Threat contained','');
+  add(pd(m.resolvedAt),'milestone','Incident resolved','');
+  (CASE.iocs||[]).forEach(function(i){add(recTime(i,'ioc'),'ioc',iocVal(i),(i.mitreId?i.mitreId+' \u00b7 ':'')+host(i),{conf:i.confidence});});
+  (CASE.evidence||[]).forEach(function(e){add(recTime(e,'evidence'),'evidence',e.name,'Collected by '+(e.collectedBy||'\u2014'));});
+  (CASE.custody||[]).forEach(function(r){var e=(CASE.evidence||[]).find(function(x){return x.id===r.evidenceId;});add(recTime(r,'custody'),'custody',(e?e.name:'Evidence')+' \u2014 '+(r.action||''),r.handledBy||'');});
+  (CASE.actions||[]).forEach(function(a){
+    var meta={status:a.status,priority:a.priority,ref:a.id},n=0,V={'in-progress':'Started','done':'Completed','cancelled':'Cancelled','open':'Reopened'};
+    var sawDone=false;
+    (a.statusLog||[]).forEach(function(l){
+      if(!l.at||!V[l.to])return;n++;if(l.to==='done'||l.to==='cancelled')sawDone=true;
+      add(pdz(l.at),'action',V[l.to]+': '+a.title,(a.owner||'')+(l.by&&l.by!==a.owner?' \u00b7 by '+l.by:''),meta);
+    });
+    if(a.completedAt&&!sawDone){n++;add(pdz(a.completedAt),'action',(a.status==='cancelled'?'Cancelled: ':'Completed: ')+a.title,a.owner||'',meta);}
+    (a.editLog||[]).forEach(function(l){if(!l.at)return;n++;add(pdz(l.at),'action','Updated: '+a.title,(l.changes||[]).join('; '),meta);});
+    var rc=CASE.recurCompleted||{};
+    Object.keys(rc).forEach(function(k){
+      if(k.indexOf(a.id+':')!==0||!rc[k]||rc[k]===true)return;n++;
+      add(pdz(rc[k]),'action','Completed: '+a.title,'occurrence due '+fmtDT(k.slice(a.id.length+1)),meta);
+    });
+    if(!n)add(recTime(a,'action'),'action',a.title,(a.owner||'')+(a.status?' \u00b7 '+a.status:''),meta);
+  });
+  (CASE.escalations||[]).forEach(function(x){add(recTime(x,'escalation'),'escalation',(x.from||'?')+' \u2192 '+(x.to||'?'),x.reason||x.changedBy||'');});
+  (CASE.notifications||[]).forEach(function(n){if(n.sent)add(recTime(n,'notification'),'notification','Notified: '+(n.recipient||''),(n.type||''));});
+  (CASE.hostAnalysis||[]).forEach(function(h){add(recTime(h,'host'),'host',(h.host||''),(h.status||'')+(h.analyst?' \u00b7 '+h.analyst:''));});
+  return ev.sort(function(a,b){return a.d-b.d;});
+}
+
+/* ── point-in-time state: needed to tell what CHANGED across the window ── */
+var SEV_RANK={low:0,medium:1,high:2,critical:3};
+var PHASE_ORDER=['triage','active','contained','resolved'];
+var PHASE_SHORT={triage:'Triage',active:'Active',contained:'Contained',resolved:'Resolved'};
+var TACTIC_NAMES={'reconnaissance':'Reconnaissance','resource-development':'Resource Development','initial-access':'Initial Access','execution':'Execution','persistence':'Persistence','privilege-escalation':'Privilege Escalation','defense-evasion':'Defense Evasion','credential-access':'Credential Access','discovery':'Discovery','lateral-movement':'Lateral Movement','collection':'Collection','command-and-control':'Command & Control','exfiltration':'Exfiltration','impact':'Impact'};
+function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s;}
+var NOUN={ioc:['indicator','indicators'],host:['host analysis','host analyses'],action:['action','actions'],evidence:['evidence item','evidence items'],custody:['custody entry','custody entries'],escalation:['escalation','escalations'],notification:['notification','notifications'],milestone:['milestone','milestones']};
+function plural(t,n){var p=NOUN[t]||[t,t+'s'];return n===1?p[0]:p[1];}
+
+/* severity as it stood at a given moment, reconstructed from the escalation log */
+function severityAt(date){
+  var m=CASE.meta||{};
+  var esc_=(CASE.escalations||[]).map(function(x){return {d:recTime(x,'escalation'),from:(x.from||'').toLowerCase(),to:(x.to||'').toLowerCase()};})
+    .filter(function(x){return x.d;}).sort(function(a,b){return a.d-b.d;});
+  if(!esc_.length)return (m.severity||'').toLowerCase();
+  var cur=null;
+  esc_.forEach(function(x){if(x.d<=date&&x.to)cur=x.to;});
+  return cur||esc_[0].from||(m.severity||'').toLowerCase();
+}
+/* response phase at a given moment, from the milestone timestamps */
+function phaseAt(date){
+  var m=CASE.meta||{};
+  var det=pd(m.detectedAt),con=pd(m.containedAt),res=pd(m.resolvedAt);
+  if(res&&res<=date)return {key:'resolved',label:'Resolved',col:'var(--success-text)'};
+  if(con&&con<=date)return {key:'contained',label:'Contained \u2014 eradication / recovery',col:'var(--info-text)'};
+  if(det&&det<=date)return {key:'active',label:'Active \u2014 investigation & containment',col:'var(--danger-text)'};
+  return {key:'triage',label:'Triage',col:'var(--warn-text)'};
+}
+
+/* Derive the "where we are" + "last window" picture. */
+/* status of an action at a point in time, from its status log */
+function actStatusAt(a,asOf){
+  var log=a.statusLog||[];
+  if(log.length){
+    var st=log[0].from||'open';
+    log.forEach(function(l){var t=pdz(l.at);if(t&&t<=asOf)st=l.to;});
+    return st;
+  }
+  if(a.completedAt&&(a.status==='done'||a.status==='cancelled')){var t2=pdz(a.completedAt);return(t2&&t2<=asOf)?a.status:'open';}
+  return a.status;
+}
+function situation(){
+  var m=CASE.meta||{};
+  var asOf=AS_OF||new Date();
+  var windowStart=windowStartFor(asOf);
+  var all=allActivity(asOf);
+  var recent=all.filter(function(e){return e.d>=windowStart;});
+
+  /* current-state counts (as of asOf) */
+  var iocs=(CASE.iocs||[]).filter(function(i){var t=recTime(i,'ioc');return t&&t<=asOf;});
+  var hosts={};iocs.forEach(function(i){hosts[host(i)]=1;});
+  var tactics={};iocs.forEach(function(i){if(i.mitreTactic)tactics[i.mitreTactic]=1;});
+  /* Rebuild state AS OF the chosen moment from the recorded timestamps, so an earlier as-of date
+     doesn't show today's finished picture. Records with no history fall back to their saved state. */
+  var actions=(CASE.actions||[]).filter(function(a){var t=pdz(a.createdAt)||recTime(a,'action');return !t||t<=asOf;})
+    .map(function(a){return Object.assign({},a,{status:actStatusAt(a,asOf)});});
+  var openActs=actions.filter(function(a){return a.status!=='done'&&a.status!=='cancelled';});
+  var allNotifs=CASE.notifications||[];
+  var notifs=allNotifs.map(function(n){var sentThen=n.sent&&(!n.sentAt||(pdz(n.sentAt)||new Date(0))<=asOf);return Object.assign({},n,{sent:sentThen});});
+  var pendNotifs=notifs.filter(function(n){return !n.sent;});
+  var evidence=(CASE.evidence||[]).filter(function(e){var t=recTime(e,'evidence');return !t||t<=asOf;});
+  var evReviewed=evidence.filter(function(e){return e.reviewed&&(!e.reviewedAt||(pdz(e.reviewedAt)||new Date(0))<=asOf);}).length;
+
+  var det=pd(m.detectedAt),con=pd(m.containedAt),res=pd(m.resolvedAt);
+  var contained=con&&con<=asOf, resolved=res&&res<=asOf;
+
+  /* phase */
+  var ph=phaseAt(asOf), phase=ph.label, phaseCol=ph.col;
+
+  /* count recent by type */
+  var recentBy={},seenRef={};recent.forEach(function(e){
+    if(e.ref){var k=e.type+':'+e.ref;if(seenRef[k])return;seenRef[k]=1;}
+    recentBy[e.type]=(recentBy[e.type]||0)+1;
+  });
+
+  return {
+    m:m,asOf:asOf,windowStart:windowStart,all:all,recent:recent,recentBy:recentBy,
+    iocs:iocs,nHosts:Object.keys(hosts).length,nTactics:Object.keys(tactics).length,
+    openActs:openActs,actionsTotal:actions.length,actionsDone:actions.length-openActs.length,
+    pendNotifs:pendNotifs,notifsTotal:notifs.length,notifsSent:notifs.length-pendNotifs.length,
+    evTotal:evidence.length,evReviewed:evReviewed,
+    contained:contained,resolved:resolved,
+    det:det,con:con,res:res,
+    dwell:(det&&con&&con<=asOf)?con-det:(det?asOf-det:null),
+    phase:phase,phaseCol:phaseCol
+  };
+}
+
+/* Auto BLUF sentence for an interim brief. */
+function blufLine(s){
+  var m=s.m,parts=[];
+  var sev=severityAt(s.asOf)||(m.severity||'').toLowerCase();
+  parts.push((sev?cap(sev)+' severity ':'')+(m.classification||'Incident')+'.');
+  if(s.resolved)parts.push('Incident resolved.');
+  else if(s.contained)parts.push('Contained; eradication and recovery in progress.');
+  else parts.push('Investigation and containment ongoing.');
+  parts.push(s.iocs.length+' indicator'+(s.iocs.length===1?'':'s')+' identified across '+s.nHosts+' host'+(s.nHosts===1?'':'s')+'.');
+  if(s.recent.length)parts.push(s.recent.length+' update'+(s.recent.length===1?'':'s')+' '+windowPhrase()+'.');
+  else parts.push('No changes '+windowPhrase()+'.');
+  if(s.openActs.length)parts.push(s.openActs.length+' action'+(s.openActs.length===1?'':'s')+' open.');
+  return parts.join(' ');
+}
+
+/* ══════════════ WHAT CHANGED ══════════════ */
+/* Material shifts across the window: severity, phase, new scope, regulator contact.
+   This is the "has the situation moved?" answer a reader scans for first. */
+function changes(s){
+  var out=[],ws=s.windowStart,ao=s.asOf;
+
+  /* severity raised / lowered */
+  var sevA=severityAt(ws),sevB=severityAt(ao);
+  if(sevA&&sevB&&sevA!==sevB){
+    var up=(SEV_RANK[sevB]||0)>(SEV_RANK[sevA]||0);
+    out.push({kind:up?'bad':'good',icon:up?'\u25B2':'\u25BC',title:'Severity '+(up?'raised':'lowered'),detail:cap(sevA)+' \u2192 '+cap(sevB)});
+  }
+
+  /* response phase moved */
+  var pA=phaseAt(ws),pB=phaseAt(ao);
+  if(pA.key!==pB.key){
+    var good=(pB.key==='contained'||pB.key==='resolved');
+    out.push({kind:good?'good':'info',icon:'\u25C6',title:'Phase change',detail:PHASE_SHORT[pA.key]+' \u2192 '+PHASE_SHORT[pB.key]});
+  }
+
+  /* severity reviewed and held (an escalation entry where nothing moved) */
+  (CASE.escalations||[]).forEach(function(x){
+    var t=recTime(x,'escalation');
+    if(t&&t>ws&&t<=ao&&(x.from||'').toLowerCase()===(x.to||'').toLowerCase()&&x.to){
+      out.push({kind:'info',icon:'\u25CF',title:'Severity reviewed',detail:'Held at '+cap((x.to||'').toLowerCase()),sub:x.reason||''});
+    }
+  });
+
+  /* new ATT&CK tactics and new hosts/sources — only meaningful if there was a prior picture */
+  var tBefore={},hBefore={},tNow={},hNow={};
+  (CASE.iocs||[]).forEach(function(i){
+    var t=recTime(i,'ioc');if(!t||t>ao)return;
+    if(i.mitreTactic){tNow[i.mitreTactic]=1;if(t<ws)tBefore[i.mitreTactic]=1;}
+    var h=host(i);if(h!=='Unattributed'){hNow[h]=1;if(t<ws)hBefore[h]=1;}
+  });
+  if(Object.keys(tBefore).length){
+    var nt=Object.keys(tNow).filter(function(k){return !tBefore[k];});
+    if(nt.length)out.push({kind:'bad',icon:'\u25B2',title:'New tactic'+(nt.length===1?'':'s')+' observed',detail:nt.map(function(k){return TACTIC_NAMES[k]||k;}).join(', ')});
+  }
+  if(Object.keys(hBefore).length){
+    var nh=Object.keys(hNow).filter(function(k){return !hBefore[k];});
+    if(nh.length)out.push({kind:'bad',icon:'\u25B2',title:'New hosts / sources',detail:nh.slice(0,4).join(', ')+(nh.length>4?' +'+(nh.length-4)+' more':'')});
+  }
+
+  /* regulator notified inside the window */
+  (CASE.notifications||[]).forEach(function(n){
+    var t=n.sent?recTime(n,'notification'):null;
+    if(t&&t>ws&&t<=ao&&n.type==='regulatory')out.push({kind:'info',icon:'\u25CF',title:'Regulator notified',detail:n.recipient||''});
+  });
+
+  /* host analysis completed inside the window */
+  (CASE.hostAnalysis||[]).forEach(function(h){
+    var t=recTime(h,'host');
+    if(t&&t>ws&&t<=ao&&h.status==='Complete')out.push({kind:'good',icon:'\u2713',title:'Host analysis complete',detail:h.host||''});
+  });
+  return out;
+}
+
+/* ══════════════ ATTENTION (overdue / imminent) ══════════════ */
+function alerts(s){
+  var out=[],ao=s.asOf,SOON_N=24*3600000,SOON_A=12*3600000;
+  function recurring(a){return a.recur&&a.recur!=='none';}   /* a recurring task's due date is only its first instance */
+
+  s.pendNotifs.forEach(function(n){
+    var d=pd(n.deadline);if(!d)return;
+    var diff=d-ao,who=(n.recipient||'Notification');
+    if(diff<0)out.push({level:'danger',text:who+' notification OVERDUE by '+dur(-diff)});
+    else if(diff<=SOON_N)out.push({level:'warn',text:who+' notification due in '+dur(diff)});
+  });
+  var overdue=s.openActs.filter(function(a){var d=pd(a.due);return d&&d<ao&&!recurring(a);});
+  var soon=s.openActs.filter(function(a){var d=pd(a.due);return d&&d>=ao&&(d-ao)<=SOON_A&&!recurring(a);});
+  if(overdue.length)out.push({level:'danger',text:overdue.length+' action'+(overdue.length===1?'':'s')+' overdue',detail:overdue.map(function(a){return a.title;}).join(' \u00b7 ')});
+  if(soon.length)out.push({level:'warn',text:soon.length+' action'+(soon.length===1?'':'s')+' due within 12h',detail:soon.map(function(a){return a.title;}).join(' \u00b7 ')});
+  out.sort(function(a,b){return (a.level==='danger'?0:1)-(b.level==='danger'?0:1);});
+  return out;
+}
+
+/* ══════════════ PLAIN-TEXT SITREP (Slack / Teams / email) ══════════════ */
+function sitrepText(s){
+  var m=s.m,L=[];
+  var sev=(severityAt(s.asOf)||m.severity||'').toUpperCase();
+  L.push('INTERIM SITREP \u2014 '+(m.id||'')+(sev?' \u2014 '+sev:''));
+  L.push(m.title||'Untitled incident');
+  L.push('As of '+fmtDT(s.asOf)+'  |  Period: '+windowPhrase().replace(/^in the /,'')+' (from '+fmtDT(s.windowStart)+')');
+  L.push('');
+  L.push('STATUS: '+s.phase);
+  L.push(blufLine(s));
+
+  var ch=changes(s);
+  L.push('');L.push('WHAT CHANGED');
+  if(ch.length)ch.forEach(function(c){L.push('- '+c.title+': '+c.detail);});
+  else L.push('- No change to severity, phase or scope in this period.');
+
+  var al=alerts(s);
+  if(al.length){L.push('');L.push('NEEDS ATTENTION');al.forEach(function(a){L.push('! '+a.text);});}
+
+  L.push('');L.push('ACTIVITY ('+s.recent.length+' update'+(s.recent.length===1?'':'s')+')');
+  var order=['ioc','host','action','evidence','custody','escalation','notification','milestone'];
+  var counts=order.filter(function(t){return s.recentBy[t];}).map(function(t){return s.recentBy[t]+' '+plural(t,s.recentBy[t]);});
+  if(counts.length)L.push(counts.join(', '));
+  s.recent.slice().reverse().slice(0,6).forEach(function(e){L.push('  '+fmtDayTime(e.d)+'  '+TYPE_META[e.type].label+': '+e.label);});
+  if(s.recent.length>6)L.push('  \u2026and '+(s.recent.length-6)+' more');
+
+  if(s.openActs.length||s.pendNotifs.length){
+    L.push('');L.push('OUTSTANDING');
+    var rk={high:0,medium:1,low:2};
+    s.openActs.slice().sort(function(a,b){return (rk[a.priority]==null?3:rk[a.priority])-(rk[b.priority]==null?3:rk[b.priority]);}).forEach(function(a){
+      L.push('- ['+((a.priority||'').toUpperCase()||'-')+'] '+a.title+(a.owner?' ('+a.owner+(a.due?', due '+fmtDT(a.due):'')+')':''));
+    });
+    s.pendNotifs.forEach(function(n){L.push('- Notify '+(n.recipient||'')+(n.deadline?' \u2014 due '+fmtDT(n.deadline):''));});
+  }
+
+  L.push('');L.push('WHERE WE ARE');
+  L.push('Indicators: '+s.iocs.length+' across '+s.nHosts+' hosts / '+s.nTactics+' tactics');
+  L.push('Elapsed: '+dur(s.dwell)+(s.contained?' to containment':' since detection'));
+  L.push('Actions: '+s.actionsDone+'/'+s.actionsTotal+' done  |  Notifications: '+s.notifsSent+'/'+s.notifsTotal+' sent  |  Evidence reviewed: '+s.evReviewed+'/'+s.evTotal);
+  return L.join('\n');
+}
+
+/* ══════════════ RENDER ══════════════ */
+var WINDOWS=[12,24,48,72];
+function render(){
+  if(!CASE)return;
+  var seg=WINDOWS.map(function(h){
+    return '<button class="'+((WINDOW_MODE==='hours'&&WINDOW_H===h)?'on':'')+'" onclick="setWindow('+h+')">'+h+'h</button>';
+  }).join('');
+  seg+='<button class="'+(WINDOW_MODE==='since'?'on':'')+'" onclick="setSinceMode()" title="Compare against a chosen time, e.g. your last brief">'+(LAST_BRIEF?'Since last brief':'Since\u2026')+'</button>';
+  document.getElementById('winseg').innerHTML=seg;
+  var sw=document.getElementById('sinceWrap');
+  if(WINDOW_MODE==='since'){sw.classList.remove('hidden');if(SINCE)document.getElementById('since').value=toLocalInput(SINCE);}
+  else sw.classList.add('hidden');
+  var s=situation();
+  document.getElementById('scope-note').textContent='as of '+fmtDT(s.asOf);
+  document.getElementById('views').innerHTML=viewInterim(s);
+  if(!document.getElementById('textpanel').classList.contains('hidden')&&!TEXT_DIRTY)document.getElementById('sitrep-text').value=sitrepText(s);
+}
+
+/* ── panels: attention strip + what-changed ── */
+function alertStrip(s){
+  var al=alerts(s);
+  if(!al.length)return '<div class="panel" style="padding:11px 18px;border-left:3px solid var(--success-text)"><span style="font-size:12.5px;color:var(--success-text);font-weight:600">&#10003; Nothing overdue, and nothing due in the next 12&ndash;24h.</span></div>';
+  var hasDanger=al.some(function(a){return a.level==='danger';});
+  return '<div class="panel" style="padding:12px 18px;border-left:3px solid '+(hasDanger?'var(--danger-text)':'var(--warn-text)')+'">'+
+    '<div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">'+
+      '<span class="mono" style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:'+(hasDanger?'var(--danger-text)':'var(--warn-text)')+';margin-right:4px">&#9888; Needs attention</span>'+
+      al.map(function(a){
+        var bg=a.level==='danger'?'var(--danger-bg)':'var(--warn-bg)',col=a.level==='danger'?'var(--danger-text)':'var(--warn-text)';
+        return '<span class="chip chip-lg" title="'+esc(a.detail||'')+'" style="background:'+bg+';color:'+col+';font-family:var(--sans);font-weight:600">'+esc(a.text)+'</span>';
+      }).join('')+
+    '</div></div>';
+}
+function changesPanel(s){
+  var ch=changes(s);
+  var head='<div class="panel-head"><span class="panel-title">What changed</span><span class="panel-sub">Material shifts '+windowPhrase()+' \u2014 severity, phase and scope.</span></div>';
+  if(!ch.length)return '<div class="panel">'+head+'<div class="panel-body" style="font-size:13px;color:var(--text2)">No change to severity, phase or scope in this period. Activity is continuing within the existing picture.</div></div>';
+  return '<div class="panel">'+head+'<div class="panel-body" style="display:flex;gap:11px;flex-wrap:wrap">'+
+    ch.map(function(c){
+      var col={bad:'var(--danger-text)',good:'var(--success-text)',info:'var(--accent)'}[c.kind];
+      var bg={bad:'var(--danger-bg)',good:'var(--success-bg)',info:'var(--info-bg)'}[c.kind];
+      return '<div style="flex:1;min-width:230px;background:'+bg+';border-left:3px solid '+col+';border-radius:var(--radius);padding:11px 14px">'+
+        '<div class="mono" style="font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:'+col+';margin-bottom:5px">'+c.icon+' '+esc(c.title)+'</div>'+
+        '<div style="font-size:14px;font-weight:600;color:var(--text);line-height:1.4">'+esc(c.detail)+'</div>'+
+        (c.sub?'<div style="font-size:11.5px;color:var(--text2);margin-top:4px;line-height:1.45">'+esc(c.sub)+'</div>':'')+
+      '</div>';
+    }).join('')+'</div></div>';
+}
+
+/* ── visual timeline of the window: activity histogram + swimlanes by event type ── */
+var TL_EVENTS=[];
+function showTip(ev,i){
+  var e=TL_EVENTS[i];if(!e)return;var mta=TYPE_META[e.type]||{col:'#888',label:e.type};
+  var t=document.getElementById('tip');
+  t.innerHTML='<div class="mono" style="font-size:10px;color:var(--text3);margin-bottom:3px">'+fmtDayTime(e.d)+' \u00b7 <span style="color:'+mta.col+'">'+esc(mta.label)+'</span></div>'+
+    '<div style="font-weight:600;word-break:break-word">'+esc(e.label)+'</div>'+(e.sub?'<div style="color:var(--text2);margin-top:2px;word-break:break-word">'+esc(e.sub)+'</div>':'');
+  t.style.display='block';
+  var x=ev.clientX+14,y=ev.clientY+14,w=t.offsetWidth,h=t.offsetHeight;
+  if(x+w>window.innerWidth-8)x=ev.clientX-w-14;
+  if(y+h>window.innerHeight-8)y=ev.clientY-h-14;
+  t.style.left=Math.max(8,x)+'px';t.style.top=Math.max(8,y)+'px';
+}
+function hideTip(){document.getElementById('tip').style.display='none';}
+
+function timelinePanel(s){
+  var ws=+s.windowStart,we=+s.asOf,span=we-ws;
+  var evs=s.recent.filter(function(e){return +e.d>=ws&&+e.d<=we;});
+  if(!evs.length||span<=0)return '';
+  TL_EVENTS=evs;
+  function pct(d){return Math.max(0,Math.min(100,(+d-ws)/span*100));}
+  var hrs=span/3600000;
+
+  /* axis ticks on round hours */
+  var steps=[1,2,3,6,12,24,48],step=steps[steps.length-1];
+  for(var i=0;i<steps.length;i++){if(hrs/steps[i]<=12){step=steps[i];break;}}
+  var ticks=[],t0=new Date(ws);t0.setMinutes(0,0,0);
+  if(step>=24){t0.setHours(0);}else{t0.setHours(Math.floor(t0.getHours()/step)*step);}
+  for(var tt=+t0;tt<=we;tt+=step*3600000){if(tt>=ws)ticks.push(new Date(tt));}
+  var lastDay=-1;
+  var tickHtml=ticks.map(function(d){
+    var x=pct(d),newDay=d.getDate()!==lastDay;lastDay=d.getDate();
+    var lab=(step>=24)?fmtDayTime(d).replace(/ \d\d:\d\d$/,''):(newDay||d===ticks[0]?fmtDayTime(d):fmtTime(d));
+    return '<div style="position:absolute;left:'+x+'%;top:0;bottom:0;width:1px;background:var(--border);'+(newDay&&step<24?'background:var(--border2)':'')+'"></div>'+
+      '<div class="mono" style="position:absolute;left:'+x+'%;bottom:-18px;transform:translateX(-50%);font-size:9.5px;color:var(--text3);white-space:nowrap">'+lab+'</div>';
+  }).join('');
+
+  /* activity histogram */
+  var N=hrs<=26?Math.max(6,Math.round(hrs)):Math.min(36,Math.round(hrs/2));
+  var bk=[];for(var b=0;b<N;b++)bk.push(0);
+  evs.forEach(function(e){var k=Math.min(N-1,Math.floor((+e.d-ws)/span*N));bk[k]++;});
+  var mx=Math.max.apply(null,bk)||1;
+  var hist='<div style="position:relative;height:38px;display:flex;align-items:flex-end;gap:2px;margin-left:128px">'+
+    bk.map(function(c,k){
+      var from=new Date(ws+span*k/N),to=new Date(ws+span*(k+1)/N);
+      return '<div title="'+c+' event'+(c===1?'':'s')+' \u00b7 '+fmtDayTime(from)+'\u2013'+fmtTime(to)+'" style="flex:1;height:'+(c?Math.max(4,Math.round(c/mx*36)):2)+'px;background:'+(c?'var(--accent)':'var(--border)')+';opacity:'+(c?0.35+0.65*c/mx:0.6)+';border-radius:2px 2px 0 0"></div>';
+    }).join('')+'</div>';
+
+  /* lanes */
+  var laneOrder=['milestone','escalation','evidence','custody','ioc','host','action','notification'];
+  var lanes=laneOrder.filter(function(t){return evs.some(function(e){return e.type===t;});});
+  var DOT=11,laneHtml=lanes.map(function(t){
+    var mta=TYPE_META[t],rows=[],items=[];
+    evs.forEach(function(e,idx){if(e.type===t)items.push({e:e,idx:idx,x:pct(e.d)});});
+    items.sort(function(a,b){return a.x-b.x;});
+    items.forEach(function(it){
+      var placed=-1;
+      for(var r=0;r<rows.length;r++){if(it.x-rows[r]>=1.5){placed=r;break;}}
+      if(placed<0){if(rows.length<4){rows.push(-99);placed=rows.length-1;}else{placed=0;var m0=0;for(var r2=1;r2<rows.length;r2++)if(rows[r2]<rows[m0])m0=r2;placed=m0;}}
+      rows[placed]=it.x;it.row=placed;
+    });
+    var h=Math.max(1,rows.length)*(DOT+5)+10;
+    var cnt=items.length;
+    return '<div style="display:flex;align-items:stretch;border-top:1px solid var(--border)">'+
+      '<div style="width:128px;flex-shrink:0;display:flex;align-items:center;gap:7px;padding-right:8px"><span style="width:8px;height:8px;border-radius:50%;background:'+mta.col+'"></span>'+
+        '<span class="mono" style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap">'+esc(mta.label)+' <span style="color:var(--text3)">'+cnt+'</span></span></div>'+
+      '<div style="position:relative;flex:1;height:'+h+'px">'+
+        items.map(function(it){
+          var done=/^Completed/.test(it.e.label);
+          return '<div onmouseenter="showTip(event,'+it.idx+')" onmousemove="showTip(event,'+it.idx+')" onmouseleave="hideTip()" '+
+            'style="position:absolute;left:'+it.x+'%;top:'+(7+it.row*(DOT+5))+'px;width:'+DOT+'px;height:'+DOT+'px;margin-left:-'+(DOT/2)+'px;border-radius:50%;'+
+            'background:'+mta.col+';border:2px solid var(--bg2);box-shadow:0 0 0 1px '+mta.col+(done?',0 0 0 3px '+mta.col+'44':'')+';cursor:default;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div>';
+        }).join('')+
+      '</div></div>';
+  }).join('');
+
+  /* grid overlay spans only the lane area */
+  var chart='<div style="position:relative;margin-top:2px">'+
+    '<div style="position:absolute;left:128px;right:0;top:0;bottom:0;pointer-events:none">'+tickHtml+
+      '<div style="position:absolute;right:0;top:0;bottom:0;width:2px;background:var(--accent)"></div></div>'+
+    laneHtml+
+  '</div>';
+  var ends='<div style="display:flex;justify-content:space-between;margin:24px 0 0 128px;font-size:10px" class="mono">'+
+    '<span style="color:var(--text3)">&#9664; '+fmtDayTime(s.windowStart)+'</span>'+
+    '<span style="color:var(--accent);font-weight:600">AS OF '+fmtDayTime(s.asOf)+' &#9654;</span></div>';
+  return '<div class="panel" style="-webkit-print-color-adjust:exact;print-color-adjust:exact">'+
+    '<div class="panel-head"><span class="panel-title">Timeline &mdash; '+windowTitle().toLowerCase()+'</span>'+
+    '<span class="panel-sub">'+evs.length+' event'+(evs.length===1?'':'s')+' by type; bars above show how busy each period was. Hover a dot for detail.</span></div>'+
+    '<div class="panel-body" style="margin-top:10px">'+hist+chart+ends+'</div></div>';
+}
+
+function statBox(label,val,sub,col,delta){
+  return '<div style="flex:1;min-width:140px;background:var(--bg);border:1px solid var(--border);border-top:3px solid '+(col||'var(--accent)')+';border-radius:var(--radius-lg);padding:13px 15px">'+
+    '<div class="mono" style="font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">'+label+'</div>'+
+    '<div style="display:flex;align-items:baseline;gap:8px"><div class="mono" style="font-size:25px;font-weight:600;line-height:1;color:var(--text)">'+val+'</div>'+
+      (delta?'<span class="mono" style="font-size:12px;font-weight:600;color:'+(delta.n>0?'var(--accent)':'var(--text3)')+'">'+(delta.n>0?'+'+delta.n:'\u2014')+(delta.n>0?' new':'')+'</span>':'')+
+    '</div>'+
+    (sub?'<div style="font-size:11px;color:var(--text3);margin-top:5px;line-height:1.4">'+sub+'</div>':'')+
+  '</div>';
+}
+
+function viewInterim(s){
+  var m=s.m;
+  var sevNow=severityAt(s.asOf)||(m.severity||'').toLowerCase();
+  var sevCol={critical:'var(--danger-text)',high:'var(--warn-text)',medium:'var(--info-text)',low:'var(--success-text)'}[sevNow]||'var(--text3)';
+  var sevBg ={critical:'var(--danger-bg)', high:'var(--warn-bg)', medium:'var(--info-bg)', low:'var(--success-bg)'}[sevNow]||'var(--bg3)';
+
+  /* ── header / BLUF ── */
+  var header=
+  '<div class="panel" style="padding:0;overflow:hidden;border-left:4px solid '+sevCol+'">'+
+    '<div style="padding:20px 24px 16px">'+
+      '<div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:11px">'+
+        '<span class="chip chip-lg" style="background:var(--warn-bg);color:var(--warn-text)">INTERIM &mdash; SITREP</span>'+
+        '<span class="chip chip-lg" style="background:'+sevBg+';color:'+sevCol+'">'+esc(sevNow||'\u2014')+'</span>'+
+        '<span class="mono" style="font-size:11px;color:var(--text3)">'+esc(m.id||'')+'</span>'+
+        '<span style="flex:1"></span>'+
+        '<span class="mono" style="font-size:11px;color:var(--text3)">As of '+fmtDT(s.asOf)+'</span>'+
+      '</div>'+
+      '<div style="font-size:19px;font-weight:600;line-height:1.35;margin-bottom:10px">'+esc(m.title||'Untitled incident')+'</div>'+
+      '<div style="display:inline-flex;align-items:center;gap:8px;padding:5px 13px;border-radius:20px;background:var(--bg3);margin-bottom:12px">'+
+        '<span style="width:8px;height:8px;border-radius:50%;background:'+s.phaseCol+';box-shadow:0 0 0 3px '+s.phaseCol+'22"></span>'+
+        '<span style="font-size:12.5px;font-weight:600;color:'+s.phaseCol+'">'+esc(s.phase)+'</span>'+
+      '</div>'+
+      '<div style="font-size:13.5px;line-height:1.6;color:var(--text2);max-width:900px">'+esc(blufLine(s))+'</div>'+
+    '</div>'+
+  '</div>';
+
+  /* ── last N hours: the headline of an interim brief ── */
+  var order=['ioc','host','action','evidence','custody','escalation','notification','milestone'];
+  var recentStats=order.filter(function(t){return s.recentBy[t];}).map(function(t){
+    var mta=TYPE_META[t];
+    return statBox(cap(plural(t,s.recentBy[t])),s.recentBy[t],windowShort(),mta.col);
+  });
+  var recentPanel=
+  '<div class="panel">'+
+    '<div class="panel-head"><span class="panel-title">'+windowTitle()+'</span>'+
+    '<span class="panel-sub">Everything that changed between '+fmtDT(s.windowStart)+' and '+fmtDT(s.asOf)+'.</span></div>'+
+    '<div class="panel-body">'+
+      (s.recent.length?
+        '<div style="display:flex;gap:11px;flex-wrap:wrap;margin-bottom:16px">'+recentStats.join('')+'</div>'+
+        '<div style="display:flex;flex-direction:column;gap:2px">'+
+          s.recent.slice().reverse().map(function(e){
+            var mta=TYPE_META[e.type]||{col:'#888',label:e.type};
+            return '<div style="display:flex;gap:12px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--border)">'+
+              '<span class="mono" style="font-size:11px;color:var(--text3);width:96px;flex-shrink:0">'+fmtDayTime(e.d)+'</span>'+
+              '<span style="width:8px;height:8px;border-radius:50%;background:'+mta.col+';flex-shrink:0;margin-top:5px"></span>'+
+              '<span class="chip" style="background:'+mta.col+'22;color:'+mta.col+';flex-shrink:0">'+mta.label+'</span>'+
+              '<div style="flex:1;min-width:0">'+
+                '<span class="mono" style="font-size:12.5px;color:var(--text);word-break:break-all">'+esc(e.label)+'</span>'+
+                (e.sub?'<span style="font-size:11.5px;color:var(--text3)"> \u00b7 '+esc(e.sub)+'</span>':'')+
+              '</div>'+
+            '</div>';
+          }).join('')+
+        '</div>'
+        :'<div style="text-align:center;padding:26px;color:var(--text3);font-size:13px">No recorded changes '+windowPhrase()+'.<br><span style="font-size:11.5px">Adjust the window or the &ldquo;as of&rdquo; time above.</span></div>')+
+    '</div>'+
+  '</div>';
+
+  /* ── where we are: current-state snapshot ── */
+  var wherePanel=
+  '<div class="panel">'+
+    '<div class="panel-head"><span class="panel-title">Where we are</span>'+
+    '<span class="panel-sub">Current position as of this report.</span></div>'+
+    '<div class="panel-body" style="display:flex;gap:11px;flex-wrap:wrap">'+
+      statBox('Indicators',s.iocs.length,s.nHosts+' host'+(s.nHosts===1?'':'s')+' \u00b7 '+s.nTactics+' tactic'+(s.nTactics===1?'':'s'),TYPE_META.ioc.col,{n:s.recentBy.ioc||0})+
+      statBox('Dwell / elapsed',dur(s.dwell),s.contained?'to containment':'since detection',s.contained?'var(--success-text)':'var(--warn-text)')+
+      statBox('Actions',s.actionsDone+' / '+s.actionsTotal,s.openActs.length+' still open',TYPE_META.action.col,{n:s.recentBy.action||0})+
+      statBox('Notifications',s.notifsSent+' / '+s.notifsTotal,s.pendNotifs.length?s.pendNotifs.length+' outstanding':'all sent',TYPE_META.notification.col)+
+      statBox('Evidence reviewed',s.evReviewed+' / '+s.evTotal,(s.evTotal-s.evReviewed)+' outstanding',TYPE_META.evidence.col)+
+    '</div>'+
+  '</div>';
+
+  /* ── what's next: outstanding actions + pending notifications ── */
+  var outstanding='';
+  if(s.openActs.length||s.pendNotifs.length){
+    outstanding=
+    '<div class="panel" style="border-left:3px solid var(--warn-text)">'+
+      '<div class="panel-head"><span class="panel-title">Outstanding &amp; next steps</span></div>'+
+      '<div class="panel-body">'+
+        (s.pendNotifs.length?'<div style="margin-bottom:'+(s.openActs.length?'16px':'0')+'">'+
+          '<div class="mono" style="font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px">Notifications pending</div>'+
+          s.pendNotifs.map(function(n){
+            var dd=pd(n.deadline),od=dd&&dd<s.asOf;
+            return '<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;padding:5px 0;font-size:12.5px">'+
+              '<span style="font-weight:600;color:var(--text)">'+esc(n.recipient||'')+'</span>'+
+              '<span class="chip" style="background:var(--bg3);color:var(--text2)">'+esc(n.type||'')+'</span>'+
+              (n.deadline?'<span class="mono" style="font-size:11px;color:'+(od?'var(--danger-text)':'var(--warn-text)')+'">'+(od?'OVERDUE \u2014 was due ':'due ')+fmtDT(n.deadline)+'</span>':'')+
+            '</div>';
+          }).join('')+'</div>':'')+
+        (s.openActs.length?'<div>'+
+          '<div class="mono" style="font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px">Actions in flight</div>'+
+          s.openActs.slice().sort(function(a,b){var r={high:0,medium:1,low:2};return (r[a.priority]==null?3:r[a.priority])-(r[b.priority]==null?3:r[b.priority]);}).map(function(a){
+            var pc={high:'var(--danger-text)',medium:'var(--warn-text)',low:'var(--text3)'}[a.priority]||'var(--text3)';
+            var dd=pd(a.due),od=dd&&dd<s.asOf;
+            return '<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;padding:5px 0;font-size:12.5px">'+
+              '<span style="width:6px;height:6px;border-radius:50%;background:'+pc+';flex-shrink:0"></span>'+
+              '<span style="flex:1;min-width:180px;color:var(--text)">'+esc(a.title)+'</span>'+
+              (a.owner?'<span style="font-size:11.5px;color:var(--text3)">'+esc(a.owner)+'</span>':'')+
+              ((a.recur&&a.recur!=='none')?'<span class="mono" style="font-size:10.5px;color:var(--text3)">recurring \u00b7 '+esc(a.recur)+'</span>':(a.due?'<span class="mono" style="font-size:10.5px;color:'+(od?'var(--danger-text)':'var(--text3)')+'">'+(od?'overdue ':'due ')+fmtDT(a.due)+'</span>':''))+
+              '<span class="chip" style="background:var(--bg3);color:var(--text2)">'+esc(a.status||'open')+'</span>'+
+            '</div>';
+          }).join('')+'</div>':'')+
+      '</div>'+
+    '</div>';
+  } else {
+    outstanding='<div class="panel"><div class="panel-body" style="font-size:12.5px;color:var(--success-text)">Nothing outstanding \u2014 all actions and notifications are closed as of this report.</div></div>';
+  }
+
+  return header+alertStrip(s)+changesPanel(s)+timelinePanel(s)+recentPanel+wherePanel+outstanding;
+}
+</script>
+</body>
+</html>

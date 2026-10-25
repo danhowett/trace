@@ -1,0 +1,733 @@
+{
+  "cases": {
+    "sample-case-live-005": {
+      "meta": {
+        "id": "IR-2026-042",
+        "title": "Cloud identity compromise — OAuth token theft (M365 / Azure)",
+        "severity": "high",
+        "status": "in-progress",
+        "owner": "Dan H",
+        "detectedAt": "2026-09-27T13:40",
+        "reportedAt": "2026-09-27T14:00",
+        "containedAt": "",
+        "resolvedAt": "",
+        "classification": "Cloud account compromise",
+        "systems": "Entra ID tenant, EXO mailbox (a.okafor@), SharePoint Online (Finance site), WKS-DEV11 (developer workstation), Azure subscription (prod-sub-01)",
+        "containment": "",
+        "narrative": "An active intrusion into the organisation's Microsoft 365 / Azure tenant is under investigation. On 27 September an adversary-in-the-middle phishing page harvested a session token for a developer account (a.okafor@), bypassing MFA. The actor established OAuth-based persistence by consenting a malicious enterprise application, then used the mailbox and SharePoint access to enumerate finance content. Over the last 24 hours the actor has escalated: additional sign-ins from new infrastructure, a hidden inbox rule, an attempt to add credentials to an Azure service principal, and the beginnings of data staging in SharePoint. Containment is in progress at time of this report — the compromised session and the malicious OAuth grant have been revoked, but the investigation into blast radius across the subscription is ongoing and not all remediation is complete."
+      },
+      "govern": {
+        "assets": "Entra ID tenant, EXO, SharePoint Online, Azure prod-sub-01, WKS-DEV11",
+        "criticality": "Tier 1 — business critical",
+        "dataClass": "Confidential",
+        "dataTypes": "Finance documents, limited employee PII, source-code repository links",
+        "regs": "UK GDPR / DPA 2018",
+        "notifDeadline": "2026-09-30T13:40",
+        "deadlineBasis": "UK GDPR Art.33 — 72h from detection (PII exposure under assessment)",
+        "legalNotes": "External counsel engaged. ICO notification under assessment pending confirmation of PII access. Privilege asserted over technical report.",
+        "commander": "Dan H (Head of IR)",
+        "legal": "Eleanor Voss (General Counsel)",
+        "dpo": "Raj Patel (DPO)",
+        "sponsor": "Helena Marsh (CISO)",
+        "comms": "Tom Reilly (Head of Comms)",
+        "externalIR": "",
+        "secureComms": "Signal bridge — tenant assumed monitored by actor until token revocation confirmed",
+        "bizImpact": "No outage. Finance SharePoint content accessed; exfiltration attempted but not confirmed complete. Response effort ongoing; cost not yet estimated.",
+        "repRisk": "Medium — contained to one tenant identity so far; no external disclosure required at this stage.",
+        "insurance": "Cyber policy CYB-88213 (Beazley). Insurer notified; claim reference pending.",
+        "riskNotes": "Active incident. Primary risk is undiscovered persistence (additional OAuth grants / service-principal credentials) and lateral movement into the Azure subscription. Blast-radius review in progress."
+      },
+      "evidence": [
+        {
+          "id": "e01",
+          "name": "Entra ID sign-in + audit log export",
+          "type": "Log export",
+          "hash": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
+          "source": "Entra ID",
+          "collectedBy": "Dan H",
+          "collectedAt": "2026-09-27T20:05",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-27T20:05:00.000Z",
+          "reviewed": true,
+          "reviewedAt": "2026-09-28T04:05:00.000Z"
+        },
+        {
+          "id": "e02",
+          "name": "EXO message trace + mailbox audit",
+          "type": "Log export",
+          "hash": "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3",
+          "source": "Exchange Online",
+          "collectedBy": "Priya S",
+          "collectedAt": "2026-09-28T00:05",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-09-28T00:05:00.000Z",
+          "reviewed": true,
+          "reviewedAt": "2026-09-28T16:05:00.000Z"
+        },
+        {
+          "id": "e03",
+          "name": "Azure activity log (prod-sub-01)",
+          "type": "Log export",
+          "hash": "c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4",
+          "source": "Azure",
+          "collectedBy": "Marcus O",
+          "collectedAt": "2026-09-29T04:05",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-09-29T04:05:00.000Z",
+          "reviewed": true,
+          "reviewedAt": "2026-09-29T06:05:00.000Z"
+        },
+        {
+          "id": "e04",
+          "name": "SharePoint audit export (Finance site)",
+          "type": "Log export",
+          "hash": "d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5",
+          "source": "SharePoint Online",
+          "collectedBy": "Dan H",
+          "collectedAt": "2026-09-29T10:05",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-29T10:05:00.000Z"
+        },
+        {
+          "id": "e05",
+          "name": "WKS-DEV11 triage collection",
+          "type": "Triage package",
+          "hash": "e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6",
+          "source": "Developer workstation",
+          "collectedBy": "Marcus O",
+          "collectedAt": "2026-09-29T11:05",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-09-29T11:05:00.000Z"
+        }
+      ],
+      "custody": [
+        {
+          "id": "c01",
+          "evidenceId": "e01",
+          "handledBy": "Dan H",
+          "action": "Acquired",
+          "timestamp": "2026-09-27T20:05",
+          "notes": "Entra logs exported at start of investigation.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-27T20:05:00.000Z"
+        },
+        {
+          "id": "c02",
+          "evidenceId": "e02",
+          "handledBy": "Priya S",
+          "action": "Analysed",
+          "timestamp": "2026-09-28T16:05",
+          "notes": "Message trace confirmed AiTM phishing as entry; OAuth grant identified.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-09-28T16:05:00.000Z"
+        },
+        {
+          "id": "c03",
+          "evidenceId": "e03",
+          "handledBy": "Marcus O",
+          "action": "Acquired",
+          "timestamp": "2026-09-29T04:05",
+          "notes": "Azure activity pulled after service-principal credential attempt flagged.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-09-29T04:05:00.000Z"
+        },
+        {
+          "id": "c04",
+          "evidenceId": "e05",
+          "handledBy": "Marcus O",
+          "action": "Acquired",
+          "timestamp": "2026-09-29T11:05",
+          "notes": "Developer workstation triaged for local token/browser artefacts.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-09-29T11:05:00.000Z"
+        }
+      ],
+      "iocs": [
+        {
+          "id": "l01",
+          "type": "url",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "hxxps://login.microsftonline-auth[.]com/common/oauth2",
+          "confidence": 90,
+          "mitreId": "T1566.002",
+          "mitreTactic": "initial-access",
+          "source": "EXO message trace",
+          "observedAt": "2026-09-27T13:05",
+          "notes": "AiTM phishing URL that harvested the session token, bypassing MFA. Typosquat of the M365 login domain.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-09-27T13:05:00.000Z"
+        },
+        {
+          "id": "l02",
+          "type": "ipv4",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "198.51.100.140",
+          "confidence": 85,
+          "mitreId": "T1078.004",
+          "mitreTactic": "initial-access",
+          "source": "Entra sign-in logs",
+          "observedAt": "2026-09-27T13:55",
+          "notes": "First anomalous interactive sign-in using the stolen session token — hosting-provider ASN, impossible-travel vs user's normal location.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-27T13:55:00.000Z"
+        },
+        {
+          "id": "l03",
+          "type": "other",
+          "hashAlgo": "",
+          "otherLabel": "OAuth grant",
+          "value": "Enterprise app consent: 'Mail Insights Pro' (appId 7f3c…)",
+          "confidence": 90,
+          "mitreId": "T1098.003",
+          "mitreTactic": "persistence",
+          "source": "Entra audit log",
+          "observedAt": "2026-09-27T18:05",
+          "notes": "Malicious OAuth enterprise application granted delegated Mail.Read / Files.Read.All — token-based persistence surviving password reset.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-27T18:05:00.000Z"
+        },
+        {
+          "id": "l04",
+          "type": "other",
+          "hashAlgo": "",
+          "otherLabel": "Activity",
+          "value": "Get-MailboxFolderStatistics; Search-Mailbox finance",
+          "confidence": 70,
+          "mitreId": "T1114.002",
+          "mitreTactic": "discovery",
+          "source": "EXO admin audit",
+          "observedAt": "2026-09-27T22:05",
+          "notes": "Mailbox enumeration and keyword search for finance content via the granted app.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-27T22:05:00.000Z"
+        },
+        {
+          "id": "l05",
+          "type": "ipv4",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "203.0.113.55",
+          "confidence": 85,
+          "mitreId": "T1539",
+          "mitreTactic": "credential-access",
+          "source": "Entra sign-in logs",
+          "observedAt": "2026-09-28T18:05",
+          "notes": "New sign-in infrastructure appeared overnight — second hosting ASN reusing the stolen session cookie.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-28T18:05:00.000Z"
+        },
+        {
+          "id": "l06",
+          "type": "other",
+          "hashAlgo": "",
+          "otherLabel": "Inbox rule",
+          "value": "Inbox rule 'zz' -> move to RSS Feeds, mark read",
+          "confidence": 90,
+          "mitreId": "T1564.008",
+          "mitreTactic": "defense-evasion",
+          "source": "EXO admin audit",
+          "observedAt": "2026-09-28T20:05",
+          "notes": "Hidden inbox rule created to auto-file and hide security/notification emails — classic BEC-style concealment.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-28T20:05:00.000Z"
+        },
+        {
+          "id": "l07",
+          "type": "other",
+          "hashAlgo": "",
+          "otherLabel": "Azure activity",
+          "value": "Add servicePrincipal credential (prod-sub-01)",
+          "confidence": 80,
+          "mitreId": "T1098.001",
+          "mitreTactic": "privilege-escalation",
+          "source": "Azure activity log",
+          "observedAt": "2026-09-29T03:05",
+          "notes": "Attempt to add a client secret to an Azure service principal — persistence + potential escalation into the subscription. Flagged and blocked.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-09-29T03:05:00.000Z"
+        },
+        {
+          "id": "l08",
+          "type": "email",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "a.okafor@corp-example.com",
+          "confidence": 95,
+          "mitreId": "T1078.004",
+          "mitreTactic": "credential-access",
+          "source": "Entra sign-in logs",
+          "observedAt": "2026-09-29T05:05",
+          "notes": "Compromised developer account — the identity at the centre of the intrusion.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-29T05:05:00.000Z"
+        },
+        {
+          "id": "l09",
+          "type": "domain",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "filesync-cdn[.]net",
+          "confidence": 75,
+          "mitreId": "T1567.002",
+          "mitreTactic": "exfiltration",
+          "source": "SharePoint audit / proxy",
+          "observedAt": "2026-09-29T08:05",
+          "notes": "Domain contacted during a SharePoint download burst from the Finance site — suspected exfiltration staging. Volume being confirmed.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-09-29T08:05:00.000Z"
+        },
+        {
+          "id": "l10",
+          "type": "other",
+          "hashAlgo": "",
+          "otherLabel": "SharePoint activity",
+          "value": "SharePoint: 220 files accessed / Finance site",
+          "confidence": 80,
+          "mitreId": "T1213.002",
+          "mitreTactic": "collection",
+          "source": "SharePoint audit log",
+          "observedAt": "2026-09-29T09:05",
+          "notes": "Large-volume access to Finance SharePoint document library in a short window — data staging for exfiltration.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-29T09:05:00.000Z"
+        }
+      ],
+      "actions": [
+        {
+          "id": "a01",
+          "title": "Revoke compromised session tokens (a.okafor@)",
+          "owner": "Dan H",
+          "priority": "high",
+          "due": "2026-09-27T21:05",
+          "status": "done",
+          "notes": "All refresh/session tokens revoked for the account.",
+          "createdAt": "2026-09-27T19:05",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-27T19:05:00.000Z",
+          "editedAt": "2026-09-27T20:15",
+          "completedAt": "2026-09-27T20:15",
+          "statusLog": [
+            {
+              "at": "2026-09-27T20:15",
+              "from": "open",
+              "to": "done",
+              "by": "Dan H"
+            }
+          ]
+        },
+        {
+          "id": "a02",
+          "title": "Reset a.okafor@ credentials + re-enrol MFA",
+          "owner": "Priya S",
+          "priority": "high",
+          "due": "2026-09-27T23:05",
+          "status": "done",
+          "notes": "Password reset, MFA methods purged and re-enrolled.",
+          "createdAt": "2026-09-27T19:05",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-09-27T19:05:00.000Z",
+          "editedAt": "2026-09-27T23:30",
+          "completedAt": "2026-09-27T23:30",
+          "statusLog": [
+            {
+              "at": "2026-09-27T23:30",
+              "from": "open",
+              "to": "done",
+              "by": "Priya S"
+            }
+          ]
+        },
+        {
+          "id": "a03",
+          "title": "Revoke malicious OAuth app consent",
+          "owner": "Dan H",
+          "priority": "high",
+          "due": "2026-09-28T17:05",
+          "status": "done",
+          "notes": "'Mail Insights Pro' enterprise app consent revoked and app blocked tenant-wide.",
+          "createdAt": "2026-09-28T08:05",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-28T08:05:00.000Z",
+          "editedAt": "2026-09-28T16:50",
+          "completedAt": "2026-09-28T16:50",
+          "statusLog": [
+            {
+              "at": "2026-09-28T14:20",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Dan H"
+            },
+            {
+              "at": "2026-09-28T16:50",
+              "from": "in-progress",
+              "to": "done",
+              "by": "Dan H"
+            }
+          ]
+        },
+        {
+          "id": "a04",
+          "title": "Block AiTM phishing domain + report takedown",
+          "owner": "Marcus O",
+          "priority": "medium",
+          "due": "2026-09-28T19:05",
+          "status": "done",
+          "notes": "microsftonline-auth[.]com blocked at proxy/DNS; takedown requested.",
+          "createdAt": "2026-09-28T12:05",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-09-28T12:05:00.000Z",
+          "editedAt": "2026-09-28T20:40",
+          "completedAt": "2026-09-28T20:40",
+          "statusLog": [
+            {
+              "at": "2026-09-28T19:55",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Marcus O"
+            },
+            {
+              "at": "2026-09-28T20:40",
+              "from": "in-progress",
+              "to": "done",
+              "by": "Marcus O"
+            }
+          ]
+        },
+        {
+          "id": "a05",
+          "title": "Remove hidden inbox rule",
+          "owner": "Priya S",
+          "priority": "medium",
+          "due": "2026-09-28T21:05",
+          "status": "done",
+          "notes": "Malicious 'zz' inbox rule removed from the mailbox.",
+          "createdAt": "2026-09-28T20:05",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-09-28T20:05:00.000Z",
+          "editedAt": "2026-09-28T21:15",
+          "completedAt": "2026-09-28T21:15",
+          "statusLog": [
+            {
+              "at": "2026-09-28T21:15",
+              "from": "open",
+              "to": "done",
+              "by": "Priya S"
+            }
+          ]
+        },
+        {
+          "id": "a06",
+          "title": "Enumerate ALL OAuth grants / enterprise apps for other persistence",
+          "owner": "Priya S",
+          "priority": "high",
+          "due": "2026-09-29T18:05",
+          "status": "in-progress",
+          "notes": "Full enterprise-app consent inventory review under way — checking for any other malicious grants.",
+          "createdAt": "2026-09-29T02:05",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-09-29T02:05:00.000Z",
+          "editedAt": "2026-09-29T11:05",
+          "statusLog": [
+            {
+              "at": "2026-09-29T11:05",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Priya S"
+            }
+          ]
+        },
+        {
+          "id": "a07",
+          "title": "Confirm SharePoint exfiltration scope (Finance site)",
+          "owner": "Dan H",
+          "priority": "high",
+          "due": "2026-09-29T20:05",
+          "status": "in-progress",
+          "notes": "Correlating SharePoint download logs with the filesync-cdn[.]net contact to size any exfiltration.",
+          "createdAt": "2026-09-29T09:05",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-29T09:05:00.000Z",
+          "editedAt": "2026-09-29T12:05",
+          "statusLog": [
+            {
+              "at": "2026-09-29T12:05",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Dan H"
+            }
+          ]
+        },
+        {
+          "id": "a08",
+          "title": "Blast-radius review across Azure subscription",
+          "owner": "Marcus O",
+          "priority": "high",
+          "due": "2026-09-30T00:05",
+          "status": "open",
+          "notes": "Assess whether the service-principal attempt touched any subscription resources.",
+          "createdAt": "2026-09-29T04:05",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-09-29T04:05:00.000Z"
+        },
+        {
+          "id": "a09",
+          "title": "ICO notification decision (pending PII confirmation)",
+          "owner": "Eleanor Voss",
+          "priority": "medium",
+          "due": "2026-09-30T14:05",
+          "status": "open",
+          "notes": "Awaiting confirmation of whether personal data was accessed before deciding on ICO notification.",
+          "createdAt": "2026-09-29T06:05",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-29T06:05:00.000Z"
+        },
+        {
+          "id": "a10",
+          "title": "Twice-daily executive situation briefing",
+          "owner": "Dan H",
+          "priority": "medium",
+          "due": "2026-09-27T20:05",
+          "status": "open",
+          "notes": "Ongoing exec briefings during active response.",
+          "createdAt": "2026-09-27T20:05",
+          "recur": "custom",
+          "recurEnd": "2026-10-02T20:05",
+          "recurHours": "12",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-27T20:05:00.000Z",
+          "editedAt": "2026-09-29T08:02",
+          "statusLog": []
+        }
+      ],
+      "escalations": [
+        {
+          "id": "x01",
+          "from": "medium",
+          "to": "high",
+          "changedBy": "Dan H",
+          "timestamp": "2026-09-27T14:00",
+          "reason": "MFA-bypass via token theft plus OAuth persistence confirmed — elevate to high.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-27T14:05:00.000Z"
+        },
+        {
+          "id": "x02",
+          "from": "high",
+          "to": "high",
+          "changedBy": "Helena Marsh",
+          "timestamp": "2026-09-29T04:05",
+          "reason": "Held at high after the Azure service-principal credential attempt; watching for escalation into the subscription.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-09-29T04:05:00.000Z"
+        }
+      ],
+      "notifications": [
+        {
+          "id": "n01",
+          "recipient": "Executive board",
+          "type": "internal",
+          "channel": "Out-of-band brief",
+          "deadline": "2026-09-27T14:05",
+          "basis": "Escalation policy",
+          "notes": "Board briefed at detection; twice-daily updates ongoing.",
+          "sent": true,
+          "sentAt": "2026-09-27T14:05"
+        },
+        {
+          "id": "n02",
+          "recipient": "Cyber insurer (Beazley)",
+          "type": "insurance",
+          "channel": "Broker",
+          "deadline": "2026-09-28T14:05",
+          "basis": "Policy notification",
+          "notes": "Insurer notified; claim reference pending.",
+          "sent": true,
+          "sentAt": "2026-09-28T02:05"
+        },
+        {
+          "id": "n03",
+          "recipient": "External counsel",
+          "type": "legal",
+          "channel": "Phone + secure email",
+          "deadline": "2026-09-28T18:05",
+          "basis": "Privilege + regulatory advice",
+          "notes": "Engaged for privilege and ICO strategy.",
+          "sent": true,
+          "sentAt": "2026-09-28T18:05"
+        },
+        {
+          "id": "n04",
+          "recipient": "Microsoft (DART / support)",
+          "type": "advisory",
+          "channel": "Support case",
+          "deadline": "2026-09-29T06:05",
+          "basis": "Tenant compromise support",
+          "notes": "Support case opened for tenant-compromise assistance.",
+          "sent": true,
+          "sentAt": "2026-09-29T06:05"
+        },
+        {
+          "id": "n05",
+          "recipient": "ICO",
+          "type": "regulatory",
+          "channel": "ICO online form",
+          "deadline": "2026-09-30T13:40",
+          "basis": "UK GDPR Art.33 — 72h",
+          "notes": "Decision pending confirmation of PII access; deadline is 72h from detection.",
+          "sent": false
+        },
+        {
+          "id": "n06",
+          "recipient": "Affected user's manager",
+          "type": "internal",
+          "channel": "Direct",
+          "deadline": "2026-09-29T20:05",
+          "basis": "Internal awareness",
+          "notes": "To brief once account fully secured and scope confirmed.",
+          "sent": false
+        }
+      ],
+      "rootCauses": [],
+      "recurCompleted": {
+        "a10:2026-09-27T20:05": "2026-09-27T19:57",
+        "a10:2026-09-28T08:05": "2026-09-28T08:17",
+        "a10:2026-09-28T20:05": "2026-09-28T20:30",
+        "a10:2026-09-29T08:05": "2026-09-29T08:02"
+      },
+      "hostAnalysis": [
+        {
+          "id": "h01",
+          "host": "Entra ID tenant",
+          "analyst": "Priya S",
+          "status": "Complete",
+          "summary": "Confirmed entry and persistence. A session token for a.okafor@ was harvested via an AiTM phishing page on 27 Sep, bypassing MFA. The actor consented a malicious OAuth enterprise application ('Mail Insights Pro') granting Mail and Files read scopes — token-based persistence that survives a password reset. Two distinct sign-in ASNs observed.",
+          "notes": "Revoked the session and the app grant during containment. Need to sweep for any OTHER consented apps — checking the full enterprise-app inventory now. The AiTM domain (microsftonline-auth[.]com) is a typosquat; reported for takedown.",
+          "evidenceIds": [
+            "e01",
+            "e02"
+          ],
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-09-28T18:05:00.000Z",
+          "editedAt": "2026-09-28T18:05:00.000Z"
+        },
+        {
+          "id": "h02",
+          "host": "Azure subscription (prod-sub-01)",
+          "analyst": "Marcus O",
+          "status": "In progress",
+          "summary": "Attempted escalation into the cloud subscription. The actor tried to add a client secret to a service principal ~11h ago; this was flagged by an alert and blocked before use. Reviewing whether any subscription resources were enumerated or accessed. No confirmed resource compromise yet — blast-radius assessment ongoing.",
+          "notes": "Still pulling full Azure activity for the sub. The SP credential-add is the worrying one — if that had succeeded they'd have a non-interactive foothold. Checking Conditional Access and PIM logs. Not done yet.",
+          "evidenceIds": [
+            "e03"
+          ],
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-09-29T07:05:00.000Z",
+          "editedAt": "2026-09-29T07:05:00.000Z"
+        }
+      ],
+      "closure": {
+        "checks": {
+          "cl1": true,
+          "cl2": true,
+          "cl3": false,
+          "cl4": false,
+          "cl5": false,
+          "cl6": false,
+          "cl7": false,
+          "cl8": false,
+          "cl9": false,
+          "cl10": false,
+          "cl11": false,
+          "cl12": false,
+          "cl13": false,
+          "cl14": false,
+          "cl15": true,
+          "cl16": false,
+          "cl17": false,
+          "cl18": false,
+          "cl19": false,
+          "cl20": false,
+          "cl21": false,
+          "cl22": false
+        },
+        "notes": ""
+      },
+      "lessons": {
+        "sessionDate": "",
+        "facilitator": "",
+        "attendees": "",
+        "well": "",
+        "better": "",
+        "detect": "",
+        "playbook": "",
+        "training": "",
+        "recs": ""
+      },
+      "exec": {}
+    }
+  },
+  "activeCaseId": "sample-case-live-005",
+  "activeTab": "dashboard"
+}

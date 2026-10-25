@@ -1,0 +1,1203 @@
+{
+  "cases": {
+    "sample-case-insider-006": {
+      "meta": {
+        "id": "IR-2026-006",
+        "title": "Insider data theft — departing sales engineer",
+        "severity": "medium",
+        "status": "closed",
+        "owner": "Dan H",
+        "detectedAt": "2026-02-17T08:10",
+        "reportedAt": "2026-02-17T09:30",
+        "containedAt": "2026-02-17T11:20",
+        "resolvedAt": "2026-03-04T17:00",
+        "classification": "Insider threat — data theft",
+        "systems": "LAPTOP-SE-0412 (sales engineer laptop), SharePoint Online (Sales site), CRM tenant, Exchange Online mailbox, DLP / web proxy",
+        "containment": "Corporate account suspended and sessions revoked; VPN and CRM export rights removed; personal cloud-storage domain blocked at the proxy; laptop network-isolated by EDR; devices recovered and imaged; cloud copy deleted under counsel supervision and the USB archive hash-matched.",
+        "narrative": "On 17 February at 08:10 the DLP platform alerted on a 3.8 GB upload from a sales engineer’s VPN session to an uncategorised personal cloud-storage service. The employee had resigned on 2 February to join a competitor. Investigation showed a staged, deliberate collection from 9 February: a bulk download of 212 pricing files, an export of 1,840 EMEA customer contacts from the CRM, three emails forwarded to a personal address, a password-protected archive, a copy to a USB drive and an rclone upload, followed by an attempt to clear traces. The account was suspended within three hours of detection, the laptop was triaged live and then imaged, and HR and counsel led the employee interview. The employee signed an undertaking, the cloud copy was deleted and verified, the USB was returned with a matching archive hash, and the DPO assessed the incident as not reportable under Art. 33. Follow-up actions closed the personal cloud storage gap and linked HR leaver notices to security monitoring."
+      },
+      "govern": {
+        "assets": "Sales SharePoint site, CRM tenant, Exchange Online mailbox, LAPTOP-SE-0412, DLP / web proxy",
+        "criticality": "Tier 2 — business important",
+        "dataClass": "Confidential",
+        "dataTypes": "Pricing and discount matrix (trade secret); customer contact records (names, business emails, deal values)",
+        "regs": "UK GDPR / DPA 2018",
+        "notifDeadline": "2026-02-20T08:10",
+        "deadlineBasis": "UK GDPR Art. 33 — 72h from awareness; assessed as not reportable (risk to individuals unlikely)",
+        "legalNotes": "Employment law and trade-secret advice via external counsel. Investigation conducted under privilege. Signed undertaking obtained; letter sent to the new employer. No criminal referral.",
+        "commander": "Dan H (Head of IR)",
+        "legal": "Eleanor Voss (General Counsel)",
+        "dpo": "Raj Patel (DPO)",
+        "sponsor": "Helena Marsh (CISO)",
+        "comms": "Tom Reilly (Head of Comms)",
+        "externalIR": "",
+        "secureComms": "Case discussed only with Legal, HR, CISO and the response team; no discussion with the employee’s line management until after the HR meeting.",
+        "bizImpact": "No operational outage. Confidential pricing and 1,840 EMEA customer contacts were copied to personal storage and a USB drive and later recovered. Cost is internal IR, HR and legal time; not estimated here.",
+        "repRisk": "Low — no customer disclosure required; data recovered before use. Competitive risk managed through the undertaking and the letter to the new employer.",
+        "insurance": "Not a claimable event under the cyber policy. Employment practices cover notified as a precaution.",
+        "riskNotes": "Residual risk: knowledge retained by the individual. Monitored through contractual obligations and counsel follow-up."
+      },
+      "evidence": [
+        {
+          "id": "e01",
+          "name": "DLP alert + web proxy log export (17 Feb)",
+          "type": "Log export",
+          "hash": "c5a0ccb3338013e26d20e6d06c537fd9c0bc385bf7382a6e08a0f08dfa19f243",
+          "source": "DLP / web proxy",
+          "collectedBy": "Marcus O",
+          "collectedAt": "2026-02-17T09:10",
+          "reviewed": true,
+          "reviewedAt": "2026-02-18T03:10",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-17T09:10:00.000Z"
+        },
+        {
+          "id": "e02",
+          "name": "LAPTOP-SE-0412 full disk image (E01)",
+          "type": "Disk image",
+          "hash": "c8ab2b199f999d75cb3b887a8a598d557e93cc3222e33c99a8ccfd211c108359",
+          "source": "Sales engineer laptop",
+          "collectedBy": "Priya S",
+          "collectedAt": "2026-02-18T15:40",
+          "reviewed": true,
+          "reviewedAt": "2026-02-19T10:40",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T15:40:00.000Z"
+        },
+        {
+          "id": "e03",
+          "name": "Microsoft 365 unified audit log (SharePoint / OneDrive)",
+          "type": "Log export",
+          "hash": "02661c4518566caa158a6f01c654f39620374c42cbe1076ac6ff61b891ce2f9b",
+          "source": "Microsoft 365",
+          "collectedBy": "Priya S",
+          "collectedAt": "2026-02-17T12:40",
+          "reviewed": true,
+          "reviewedAt": "2026-02-18T08:40",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-17T12:40:00.000Z"
+        },
+        {
+          "id": "e04",
+          "name": "CRM audit trail — report export history",
+          "type": "Log export",
+          "hash": "fd527331c2239590b368f14663cb06d4a0c31cc5b0f9b7f8a5e73701dce3dc8e",
+          "source": "CRM tenant",
+          "collectedBy": "Priya S",
+          "collectedAt": "2026-02-17T12:30",
+          "reviewed": true,
+          "reviewedAt": "2026-02-18T09:30",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-17T12:30:00.000Z"
+        },
+        {
+          "id": "e05",
+          "name": "LAPTOP-SE-0412 live-response triage package (USB, prefetch, browser)",
+          "type": "Triage collection",
+          "hash": "fa94171789278c9c96a8e01bd2914c31abb947a3fb7a7923f3f62ec53662a4af",
+          "source": "Sales engineer laptop",
+          "collectedBy": "Marcus O",
+          "collectedAt": "2026-02-17T14:50",
+          "reviewed": true,
+          "reviewedAt": "2026-02-18T12:50",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-17T14:50:00.000Z"
+        },
+        {
+          "id": "e06",
+          "name": "Exchange Online message trace + forwarded items",
+          "type": "Log export",
+          "hash": "94f6156f0b93f4b9c8c1ffaa4ad3d572b2105146b0948a70c01d0c4da826d819",
+          "source": "Exchange Online",
+          "collectedBy": "Dan H",
+          "collectedAt": "2026-02-17T13:05",
+          "reviewed": true,
+          "reviewedAt": "2026-02-18T12:05",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-17T13:05:00.000Z"
+        },
+        {
+          "id": "e07",
+          "name": "Employment contract, AUP and confidentiality undertaking (HR copies)",
+          "type": "Document",
+          "hash": "6fbdefb2c7311bbfba887f1a8e56030839da3cf1997afd765f416ab329e048ec",
+          "source": "HR",
+          "collectedBy": "Dan H",
+          "collectedAt": "2026-02-17T11:30",
+          "reviewed": true,
+          "reviewedAt": "2026-02-18T11:30",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-17T11:30:00.000Z"
+        }
+      ],
+      "custody": [
+        {
+          "id": "c01",
+          "evidenceId": "e01",
+          "handledBy": "Marcus O",
+          "action": "Acquired",
+          "timestamp": "2026-02-17T09:10",
+          "notes": "DLP alert and associated proxy logs exported at triage.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-17T09:10:00.000Z"
+        },
+        {
+          "id": "c02",
+          "evidenceId": "e07",
+          "handledBy": "Dan H",
+          "action": "Acquired",
+          "timestamp": "2026-02-17T11:30",
+          "notes": "HR copies received via Legal; privileged handling applied.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-17T11:30:00.000Z"
+        },
+        {
+          "id": "c03",
+          "evidenceId": "e04",
+          "handledBy": "Priya S",
+          "action": "Acquired",
+          "timestamp": "2026-02-17T12:30",
+          "notes": "CRM report-export history pulled; legal hold placed on the audit trail.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-17T12:30:00.000Z"
+        },
+        {
+          "id": "c04",
+          "evidenceId": "e03",
+          "handledBy": "Priya S",
+          "action": "Acquired",
+          "timestamp": "2026-02-17T12:40",
+          "notes": "Unified audit log scoped to the employee for 1–17 Feb.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-17T12:40:00.000Z"
+        },
+        {
+          "id": "c05",
+          "evidenceId": "e06",
+          "handledBy": "Dan H",
+          "action": "Acquired",
+          "timestamp": "2026-02-17T13:05",
+          "notes": "Message trace and the three forwarded items exported.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-17T13:05:00.000Z"
+        },
+        {
+          "id": "c06",
+          "evidenceId": "e05",
+          "handledBy": "Marcus O",
+          "action": "Acquired",
+          "timestamp": "2026-02-17T14:50",
+          "notes": "Remote EDR live-response package collected before laptop recovery.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-17T14:50:00.000Z"
+        },
+        {
+          "id": "c07",
+          "evidenceId": "e02",
+          "handledBy": "Priya S",
+          "action": "Acquired",
+          "timestamp": "2026-02-18T15:40",
+          "notes": "Laptop recovered at HR meeting; imaged with a hardware write blocker. Hashes verified.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T15:40:00.000Z"
+        },
+        {
+          "id": "c08",
+          "evidenceId": "e02",
+          "handledBy": "Priya S",
+          "action": "Transferred",
+          "timestamp": "2026-02-18T17:30",
+          "notes": "Image placed in the evidence safe; working copy mounted read-only for analysis.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T17:30:00.000Z"
+        },
+        {
+          "id": "c09",
+          "evidenceId": "e01",
+          "handledBy": "Priya S",
+          "action": "Analysed",
+          "timestamp": "2026-02-18T10:00",
+          "notes": "Upload event reconstructed with the proxy session log.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T10:00:00.000Z"
+        },
+        {
+          "id": "c10",
+          "evidenceId": "e05",
+          "handledBy": "Marcus O",
+          "action": "Analysed",
+          "timestamp": "2026-02-18T11:15",
+          "notes": "USB serial, rclone execution and CCleaner run identified from triage artefacts.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-18T11:15:00.000Z"
+        }
+      ],
+      "iocs": [
+        {
+          "id": "i01",
+          "type": "account",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "CORP\\jwhitlock",
+          "confidence": 95,
+          "mitreId": "T1078",
+          "mitreTactic": "initial-access",
+          "source": "LAPTOP-SE-0412",
+          "observedAt": "2026-02-09T19:50",
+          "notes": "Valid corporate account used throughout. Every action in this case was performed with the employee’s own credentials.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T14:00:00.000Z"
+        },
+        {
+          "id": "i02",
+          "type": "other",
+          "hashAlgo": "",
+          "otherLabel": "SharePoint library enumeration",
+          "value": "Pricing / Contracts / Pipeline libraries browsed in sequence",
+          "confidence": 70,
+          "mitreId": "T1083",
+          "mitreTactic": "discovery",
+          "source": "SharePoint Online (Sales site)",
+          "observedAt": "2026-02-09T19:52",
+          "notes": "Rapid sequential browsing of three libraries the employee rarely used.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T14:17:00.000Z"
+        },
+        {
+          "id": "i03",
+          "type": "filename",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "Q1_Pricing_Master_v7.xlsx",
+          "confidence": 90,
+          "mitreId": "T1213.002",
+          "mitreTactic": "collection",
+          "source": "SharePoint Online (Sales site)",
+          "observedAt": "2026-02-09T20:14",
+          "notes": "Master price list and discount matrix downloaded; first of 212 bulk downloads in 6 minutes.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T14:34:00.000Z"
+        },
+        {
+          "id": "i04",
+          "type": "other",
+          "hashAlgo": "",
+          "otherLabel": "CRM report export",
+          "value": "All Accounts – EMEA (1,840 contacts), exported to CSV",
+          "confidence": 90,
+          "mitreId": "T1213",
+          "mitreTactic": "collection",
+          "source": "CRM tenant (audit log)",
+          "observedAt": "2026-02-11T19:47",
+          "notes": "Report export outside working hours; the employee had never exported this report before.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T14:51:00.000Z"
+        },
+        {
+          "id": "i05",
+          "type": "filename",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "CustomerList_EMEA_2026.csv",
+          "confidence": 90,
+          "mitreId": "T1005",
+          "mitreTactic": "collection",
+          "source": "LAPTOP-SE-0412",
+          "observedAt": "2026-02-11T19:49",
+          "notes": "Local copy of the CRM export (names, business emails, deal values).",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-18T15:08:00.000Z"
+        },
+        {
+          "id": "i06",
+          "type": "email",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "j.whitlock.personal@mailbox-example.com",
+          "confidence": 85,
+          "mitreId": "T1048.003",
+          "mitreTactic": "exfiltration",
+          "source": "Exchange Online (mailbox)",
+          "observedAt": "2026-02-10T21:18",
+          "notes": "Three emails with pricing attachments forwarded to a personal address.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-18T15:25:00.000Z"
+        },
+        {
+          "id": "i07",
+          "type": "filename",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "CCleaner64.exe",
+          "confidence": 70,
+          "mitreId": "T1070.004",
+          "mitreTactic": "defense-evasion",
+          "source": "LAPTOP-SE-0412",
+          "observedAt": "2026-02-16T22:58",
+          "notes": "Run minutes after the staging work to clear browser history and temp files (prefetch).",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-18T15:42:00.000Z"
+        },
+        {
+          "id": "i08",
+          "type": "filename",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "rclone.exe",
+          "confidence": 85,
+          "mitreId": "T1105",
+          "mitreTactic": "command-and-control",
+          "source": "LAPTOP-SE-0412",
+          "observedAt": "2026-02-16T22:25",
+          "notes": "Portable rclone placed in the user profile; not part of any approved software set.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-18T15:59:00.000Z"
+        },
+        {
+          "id": "i09",
+          "type": "hash",
+          "hashAlgo": "SHA-256",
+          "otherLabel": "",
+          "value": "002912dfadf776a9c26d1bb6f237d702f7e04aa00f13f6c16cf47a48f5ca14c7",
+          "confidence": 80,
+          "mitreId": "T1105",
+          "mitreTactic": "command-and-control",
+          "source": "LAPTOP-SE-0412",
+          "observedAt": "2026-02-16T22:25",
+          "notes": "SHA-256 of the rclone binary found on the laptop.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-18T16:16:00.000Z"
+        },
+        {
+          "id": "i10",
+          "type": "filename",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "rclone.conf",
+          "confidence": 80,
+          "mitreId": "T1567.002",
+          "mitreTactic": "exfiltration",
+          "source": "LAPTOP-SE-0412",
+          "observedAt": "2026-02-16T22:31",
+          "notes": "Remote definition pointing at the personal cloud storage account.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-18T16:33:00.000Z"
+        },
+        {
+          "id": "i11",
+          "type": "filename",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "proposal_backup.7z",
+          "confidence": 90,
+          "mitreId": "T1560.001",
+          "mitreTactic": "collection",
+          "source": "LAPTOP-SE-0412",
+          "observedAt": "2026-02-12T21:03",
+          "notes": "Password-protected archive of 212 pricing files plus the customer CSV (3.8 GB).",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T16:50:00.000Z"
+        },
+        {
+          "id": "i12",
+          "type": "hash",
+          "hashAlgo": "SHA-256",
+          "otherLabel": "",
+          "value": "311648bad41e0d3d903fd45c97e860962ceddecde6efb5b381e66b102d719377",
+          "confidence": 90,
+          "mitreId": "T1560.001",
+          "mitreTactic": "collection",
+          "source": "LAPTOP-SE-0412",
+          "observedAt": "2026-02-12T21:03",
+          "notes": "SHA-256 of the archive; matched against the copy recovered from the USB drive.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T17:07:00.000Z"
+        },
+        {
+          "id": "i13",
+          "type": "other",
+          "hashAlgo": "",
+          "otherLabel": "USB serial",
+          "value": "4C530001171205101434",
+          "confidence": 90,
+          "mitreId": "T1052.001",
+          "mitreTactic": "exfiltration",
+          "source": "LAPTOP-SE-0412",
+          "observedAt": "2026-02-13T18:22",
+          "notes": "Removable drive first seen 13 Feb; archive copied to it nine minutes later.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-18T17:24:00.000Z"
+        },
+        {
+          "id": "i14",
+          "type": "domain",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "cloudvault-storage.example",
+          "confidence": 90,
+          "mitreId": "T1567.002",
+          "mitreTactic": "exfiltration",
+          "source": "DLP / web proxy",
+          "observedAt": "2026-02-16T22:40",
+          "notes": "Personal cloud storage service. Not on the approved list; categorised only as “uncategorised” so it was monitored, not blocked.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-18T17:41:00.000Z"
+        },
+        {
+          "id": "i15",
+          "type": "url",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "https://upload.cloudvault-storage.example/api/v2/transfer",
+          "confidence": 90,
+          "mitreId": "T1567.002",
+          "mitreTactic": "exfiltration",
+          "source": "DLP / web proxy",
+          "observedAt": "2026-02-17T07:55",
+          "notes": "Upload endpoint. 3.8 GB sent in 41 minutes, which triggered the DLP alert.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-18T17:58:00.000Z"
+        },
+        {
+          "id": "i16",
+          "type": "user-agent",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "rclone/v1.66.0",
+          "confidence": 85,
+          "mitreId": "T1567.002",
+          "mitreTactic": "exfiltration",
+          "source": "DLP / web proxy",
+          "observedAt": "2026-02-17T07:55",
+          "notes": "User-agent on the upload session; confirms rclone, not a browser.",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-18T18:15:00.000Z"
+        },
+        {
+          "id": "i17",
+          "type": "ipv4",
+          "hashAlgo": "",
+          "otherLabel": "",
+          "value": "203.0.113.88",
+          "confidence": 60,
+          "mitreId": "T1078",
+          "mitreTactic": "initial-access",
+          "source": "DLP / web proxy",
+          "observedAt": "2026-02-17T07:41",
+          "notes": "Residential ISP address on the VPN-authenticated session at the time of the upload.",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T18:32:00.000Z"
+        }
+      ],
+      "actions": [
+        {
+          "id": "a01",
+          "title": "Suspend account, revoke sessions and VPN, remove CRM export role",
+          "owner": "Dan H",
+          "priority": "high",
+          "due": "2026-02-17T10:30",
+          "status": "done",
+          "notes": "Account disabled in Entra; refresh tokens revoked; VPN profile and CRM export permission removed.",
+          "createdAt": "2026-02-17T09:35",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-02-17T11:12",
+          "editedAt": "2026-02-17T11:12",
+          "statusLog": [
+            {
+              "at": "2026-02-17T10:15",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Dan H"
+            },
+            {
+              "at": "2026-02-17T11:12",
+              "from": "in-progress",
+              "to": "done",
+              "by": "Dan H"
+            }
+          ],
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-17T09:35:00.000Z"
+        },
+        {
+          "id": "a02",
+          "title": "Block cloudvault-storage.example at the proxy; isolate laptop via EDR",
+          "owner": "Marcus O",
+          "priority": "high",
+          "due": "2026-02-17T11:30",
+          "status": "done",
+          "notes": "Domain category set to blocked; laptop network-isolated (management channel left open for live response).",
+          "createdAt": "2026-02-17T09:40",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-02-17T11:20",
+          "editedAt": "2026-02-17T11:20",
+          "statusLog": [
+            {
+              "at": "2026-02-17T10:35",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Marcus O"
+            },
+            {
+              "at": "2026-02-17T11:20",
+              "from": "in-progress",
+              "to": "done",
+              "by": "Marcus O"
+            }
+          ],
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-17T09:40:00.000Z"
+        },
+        {
+          "id": "a03",
+          "title": "Preserve M365 and CRM audit trails (legal hold)",
+          "owner": "Priya S",
+          "priority": "high",
+          "due": "2026-02-17T12:00",
+          "status": "done",
+          "notes": "Holds applied; audit retention extended beyond the default window.",
+          "createdAt": "2026-02-17T10:00",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-02-17T12:40",
+          "editedAt": "2026-02-17T12:40",
+          "statusLog": [
+            {
+              "at": "2026-02-17T11:30",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Priya S"
+            },
+            {
+              "at": "2026-02-17T12:40",
+              "from": "in-progress",
+              "to": "done",
+              "by": "Priya S"
+            }
+          ],
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-17T10:00:00.000Z"
+        },
+        {
+          "id": "a04",
+          "title": "Instruct external counsel; agree privilege and evidence-handling protocol",
+          "owner": "Dan H",
+          "priority": "high",
+          "due": "2026-02-17T13:00",
+          "status": "done",
+          "notes": "Counsel engaged; findings routed through Legal.",
+          "createdAt": "2026-02-17T10:15",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-02-17T12:55",
+          "editedAt": "2026-02-17T12:55",
+          "statusLog": [
+            {
+              "at": "2026-02-17T12:55",
+              "from": "open",
+              "to": "done",
+              "by": "Dan H"
+            }
+          ],
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-17T10:15:00.000Z"
+        },
+        {
+          "id": "a05",
+          "title": "Remote live-response triage of LAPTOP-SE-0412",
+          "owner": "Marcus O",
+          "priority": "high",
+          "due": "2026-02-17T15:00",
+          "status": "done",
+          "notes": "USB history, prefetch and browser artefacts collected before the device was recovered.",
+          "createdAt": "2026-02-17T12:50",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-02-17T14:50",
+          "editedAt": "2026-02-17T14:50",
+          "statusLog": [
+            {
+              "at": "2026-02-17T14:00",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Marcus O"
+            },
+            {
+              "at": "2026-02-17T14:50",
+              "from": "in-progress",
+              "to": "done",
+              "by": "Marcus O"
+            }
+          ],
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-17T12:50:00.000Z"
+        },
+        {
+          "id": "a06",
+          "title": "Recover laptop and USB drive; image the laptop with a write blocker",
+          "owner": "Priya S",
+          "priority": "high",
+          "due": "2026-02-18T16:00",
+          "status": "done",
+          "notes": "Laptop and the USB drive handed over at the HR meeting. Image hashes verified.",
+          "createdAt": "2026-02-17T16:00",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-02-18T15:40",
+          "editedAt": "2026-02-18T15:40",
+          "statusLog": [
+            {
+              "at": "2026-02-18T12:00",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Priya S"
+            },
+            {
+              "at": "2026-02-18T15:40",
+              "from": "in-progress",
+              "to": "done",
+              "by": "Priya S"
+            }
+          ],
+          "editLog": [
+            {
+              "at": "2026-02-18T09:20",
+              "by": "Dan H",
+              "changes": [
+                "owner: Marcus O → Priya S",
+                "due: 2026-02-18 12:00 → 2026-02-18 16:00"
+              ]
+            }
+          ],
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-17T16:00:00.000Z"
+        },
+        {
+          "id": "a07",
+          "title": "Preservation request to the cloud storage provider (via counsel)",
+          "owner": "Dan H",
+          "priority": "medium",
+          "due": "2026-02-18T17:00",
+          "status": "done",
+          "notes": "Account and access logs preserved pending deletion verification.",
+          "createdAt": "2026-02-17T16:30",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-02-18T16:20",
+          "editedAt": "2026-02-18T16:20",
+          "statusLog": [
+            {
+              "at": "2026-02-18T16:20",
+              "from": "open",
+              "to": "done",
+              "by": "Dan H"
+            }
+          ],
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-17T16:30:00.000Z"
+        },
+        {
+          "id": "a08",
+          "title": "Factual timeline pack for the HR interview",
+          "owner": "Dan H",
+          "priority": "medium",
+          "due": "2026-02-19T09:00",
+          "status": "done",
+          "notes": "Neutral timeline with evidence references supplied to HR and Legal.",
+          "createdAt": "2026-02-18T17:00",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-02-19T08:45",
+          "editedAt": "2026-02-19T08:45",
+          "statusLog": [
+            {
+              "at": "2026-02-19T07:10",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Dan H"
+            },
+            {
+              "at": "2026-02-19T08:45",
+              "from": "in-progress",
+              "to": "done",
+              "by": "Dan H"
+            }
+          ],
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-18T17:00:00.000Z"
+        },
+        {
+          "id": "a09",
+          "title": "Verify cloud copy deleted and USB returned under signed undertaking",
+          "owner": "Priya S",
+          "priority": "high",
+          "due": "2026-02-20T12:00",
+          "status": "done",
+          "notes": "Counsel witnessed deletion; account closed; USB archive hash matched the one on the laptop.",
+          "createdAt": "2026-02-19T11:00",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-02-20T11:30",
+          "editedAt": "2026-02-20T11:30",
+          "statusLog": [
+            {
+              "at": "2026-02-20T10:25",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Priya S"
+            },
+            {
+              "at": "2026-02-20T11:30",
+              "from": "in-progress",
+              "to": "done",
+              "by": "Priya S"
+            }
+          ],
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-19T11:00:00.000Z"
+        },
+        {
+          "id": "a10",
+          "title": "Art. 33 UK GDPR risk assessment and decision record",
+          "owner": "Raj Patel",
+          "priority": "high",
+          "due": "2026-02-20T08:10",
+          "status": "done",
+          "notes": "Assessed as unlikely to result in a risk to individuals given recovery and verified deletion. Not reportable; decision documented.",
+          "createdAt": "2026-02-17T11:45",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-02-19T17:30",
+          "editedAt": "2026-02-19T17:30",
+          "statusLog": [
+            {
+              "at": "2026-02-19T17:30",
+              "from": "open",
+              "to": "done",
+              "by": "Raj Patel"
+            }
+          ],
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-17T11:45:00.000Z"
+        },
+        {
+          "id": "a11",
+          "title": "Daily check of residual access and sign-ins for the departed account",
+          "owner": "Priya S",
+          "priority": "low",
+          "due": "2026-02-18T09:00",
+          "status": "done",
+          "notes": "Daily until end of notice period; no further activity observed.",
+          "createdAt": "2026-02-18T08:30",
+          "recur": "daily",
+          "recurEnd": "2026-02-26T09:00",
+          "recurHours": "",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-18T08:30:00.000Z",
+          "editedAt": "2026-02-26T09:20",
+          "statusLog": [
+            {
+              "at": "2026-02-26T09:20",
+              "from": "open",
+              "to": "done",
+              "by": "Priya S"
+            }
+          ],
+          "completedAt": "2026-02-26T09:20"
+        },
+        {
+          "id": "a12",
+          "title": "Switch personal cloud-storage categories to block mode",
+          "owner": "Marcus O",
+          "priority": "medium",
+          "due": "2026-03-03T17:00",
+          "status": "done",
+          "notes": "Policy change deployed. Monitor-only mode retired for the personal cloud category.",
+          "createdAt": "2026-02-23T10:00",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-03-03T15:10",
+          "editedAt": "2026-03-03T15:10",
+          "statusLog": [
+            {
+              "at": "2026-03-03T12:40",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Marcus O"
+            },
+            {
+              "at": "2026-03-03T15:10",
+              "from": "in-progress",
+              "to": "done",
+              "by": "Marcus O"
+            }
+          ],
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-23T10:00:00.000Z"
+        },
+        {
+          "id": "a13",
+          "title": "Post-incident report and lessons-learned session",
+          "owner": "Dan H",
+          "priority": "low",
+          "due": "2026-03-04T12:00",
+          "status": "done",
+          "notes": "Report issued; lessons session held.",
+          "createdAt": "2026-02-24T10:00",
+          "recur": "none",
+          "recurEnd": "",
+          "recurHours": "",
+          "completedAt": "2026-03-04T16:40",
+          "editedAt": "2026-03-04T16:40",
+          "statusLog": [
+            {
+              "at": "2026-03-04T15:40",
+              "from": "open",
+              "to": "in-progress",
+              "by": "Dan H"
+            },
+            {
+              "at": "2026-03-04T16:40",
+              "from": "in-progress",
+              "to": "done",
+              "by": "Dan H"
+            }
+          ],
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-24T10:00:00.000Z"
+        }
+      ],
+      "escalations": [
+        {
+          "id": "x01",
+          "from": "medium",
+          "to": "high",
+          "changedBy": "Dan H",
+          "timestamp": "2026-02-17T14:30",
+          "reason": "Triage confirms confidential pricing IP and 1,840 customer contact records were copied to personal storage and a USB drive. Elevate to high pending recovery.",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-17T14:35:00.000Z"
+        },
+        {
+          "id": "x02",
+          "from": "high",
+          "to": "medium",
+          "changedBy": "Dan H",
+          "timestamp": "2026-02-24T11:00",
+          "reason": "Cloud copy deleted under counsel supervision, USB recovered and hash-matched, undertaking signed. Residual risk reduced to medium (contractual follow-up).",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-24T11:05:00.000Z"
+        }
+      ],
+      "notifications": [
+        {
+          "id": "n01",
+          "recipient": "HR Director",
+          "type": "internal",
+          "channel": "email",
+          "deadline": "2026-02-17T09:30",
+          "basis": "Case referral",
+          "notes": "HR engaged before any contact with the employee.",
+          "sent": true,
+          "sentAt": "2026-02-17T09:32"
+        },
+        {
+          "id": "n02",
+          "recipient": "General Counsel",
+          "type": "legal",
+          "channel": "phone",
+          "deadline": "2026-02-17T09:45",
+          "basis": "Privilege / employment law",
+          "notes": "Counsel directed that all findings route through Legal.",
+          "sent": true,
+          "sentAt": "2026-02-17T09:50"
+        },
+        {
+          "id": "n03",
+          "recipient": "CISO (executive sponsor)",
+          "type": "internal",
+          "channel": "email",
+          "deadline": "2026-02-17T10:30",
+          "basis": "Escalation policy",
+          "notes": "Brief on confirmed data movement and planned containment.",
+          "sent": true,
+          "sentAt": "2026-02-17T10:20"
+        },
+        {
+          "id": "n04",
+          "recipient": "Data Protection Officer",
+          "type": "advisory",
+          "channel": "email",
+          "deadline": "2026-02-17T12:00",
+          "basis": "UK GDPR Art. 33 assessment",
+          "notes": "Personal data (customer contacts) in scope; 72h assessment clock started at detection.",
+          "sent": true,
+          "sentAt": "2026-02-17T11:50"
+        },
+        {
+          "id": "n05",
+          "recipient": "Head of Sales",
+          "type": "internal",
+          "channel": "video-call",
+          "deadline": "2026-02-17T16:00",
+          "basis": "Business continuity",
+          "notes": "Customer comms hold and account-coverage plan for the departing employee’s accounts.",
+          "sent": true,
+          "sentAt": "2026-02-17T16:10"
+        },
+        {
+          "id": "n06",
+          "recipient": "Employee (formal notice, via HR)",
+          "type": "internal",
+          "channel": "in-person",
+          "deadline": "2026-02-18T09:00",
+          "basis": "Disciplinary procedure",
+          "notes": "Employee informed of the investigation and asked to return devices.",
+          "sent": true,
+          "sentAt": "2026-02-18T09:05"
+        },
+        {
+          "id": "n07",
+          "recipient": "Competitor (letter via external counsel)",
+          "type": "legal",
+          "channel": "written-report",
+          "deadline": "2026-02-20T17:00",
+          "basis": "Trade secrets / contractual protection",
+          "notes": "Letter reminding the new employer of confidentiality obligations and requesting confirmation of non-use.",
+          "sent": true,
+          "sentAt": "2026-02-20T16:30"
+        }
+      ],
+      "rootCauses": [
+        {
+          "id": "r01",
+          "factor": "Personal cloud storage monitored, not blocked",
+          "type": "technical",
+          "detail": "The uncategorised cloud category was set to monitor-only. The DLP alert fired after 3.8 GB had already been uploaded, so detection could not prevent loss.",
+          "remediation": "Personal and uncategorised cloud-storage categories moved to block mode; exceptions by request. Alert volume threshold lowered."
+        },
+        {
+          "id": "r02",
+          "factor": "Resignation not linked to security monitoring",
+          "type": "process",
+          "detail": "Fifteen days passed between the resignation and detection. HR and Security had no process to raise monitoring on a leaver’s account during their notice period.",
+          "remediation": "HR now notifies Security on every resignation; leaver watch-list triggers enhanced DLP and unusual-access alerts during notice."
+        },
+        {
+          "id": "r03",
+          "factor": "Broad access to pricing and CRM exports",
+          "type": "technical",
+          "detail": "CRM export and the Pricing library were open to all sales users with no sensitivity label or time-limited access. The employee only needed read access to their own accounts.",
+          "remediation": "CRM export restricted to a managers-only role; Pricing library labelled Confidential with download limited to approved devices."
+        },
+        {
+          "id": "r04",
+          "factor": "Removable media permitted on corporate laptops",
+          "type": "technical",
+          "detail": "USB mass storage was allowed with no write-blocking or logging beyond the EDR event stream.",
+          "remediation": "USB storage set to read-only for standard users; write access by exception with logging."
+        },
+        {
+          "id": "r05",
+          "factor": "Managers not primed to report leaver risk",
+          "type": "people",
+          "detail": "The employee’s manager had noticed unusual evening work in the prior week but had no route or prompt to raise it.",
+          "remediation": "Managers receive a leaver-risk checklist from HR at resignation, including how to raise concerns to Security."
+        }
+      ],
+      "recurCompleted": {
+        "a11:2026-02-18T09:00": "2026-02-18T09:12",
+        "a11:2026-02-19T09:00": "2026-02-19T08:54",
+        "a11:2026-02-20T09:00": "2026-02-20T09:20",
+        "a11:2026-02-21T09:00": "2026-02-21T09:04",
+        "a11:2026-02-22T09:00": "2026-02-22T08:51",
+        "a11:2026-02-23T09:00": "2026-02-23T09:15",
+        "a11:2026-02-24T09:00": "2026-02-24T09:07",
+        "a11:2026-02-25T09:00": "2026-02-25T09:18",
+        "a11:2026-02-26T09:00": "2026-02-26T09:20"
+      },
+      "hostAnalysis": [
+        {
+          "id": "h01",
+          "host": "LAPTOP-SE-0412",
+          "analyst": "Priya S",
+          "status": "Complete",
+          "summary": "Confirms the staging and exfiltration endpoint. Between 9 and 17 February the user built a 3.8 GB password-protected archive (212 pricing files plus the EMEA customer CSV), copied it to a USB drive on 13 February and, on 16 February, staged portable rclone and a configuration pointing at a personal cloud storage account. CCleaner was run at 22:58 on 16 February to remove traces. The archive was uploaded at 07:55 on 17 February. All activity used the employee’s own account and was visible to the endpoint agent; none of it was blocked.",
+          "notes": "Prefetch shows rclone.exe first run 22:31 on 16 Feb and CCleaner64.exe at 22:58. setupapi.dev.log first entry for the USB serial is 18:22 on 13 Feb. Archive hash matches the copy on the recovered USB. Browser history cleared but the SQLite free pages still hold the cloud-storage login URL. Image mounted read-only; still need to check OneDrive sync folder (clean).",
+          "evidenceIds": [
+            "e02",
+            "e05"
+          ],
+          "editedAt": "2026-02-19T10:30:00.000Z",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-19T10:30:00.000Z"
+        },
+        {
+          "id": "h02",
+          "host": "SharePoint Online (Sales site)",
+          "analyst": "Priya S",
+          "status": "Complete",
+          "summary": "The user downloaded 212 files from the Pricing, Contracts and Pipeline libraries in six minutes on the evening of 9 February, after first enumerating the three libraries. The downloads were outside their normal pattern: in the prior 90 days they had opened four files in these libraries. The master price list and discount matrix were included.",
+          "notes": "UAL filtered on user and operation FileDownloaded; 212 events 20:14–20:20. Library enumeration (PageViewed) at 19:52. Baseline: 4 file opens in 90 days. No sharing links created. Access came through the sales-team group with no sensitivity-label restriction.",
+          "evidenceIds": [
+            "e03"
+          ],
+          "editedAt": "2026-02-19T11:30:00.000Z",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-19T11:30:00.000Z"
+        },
+        {
+          "id": "h03",
+          "host": "CRM tenant (audit log)",
+          "analyst": "Priya S",
+          "status": "Complete",
+          "summary": "On 11 February at 19:47 the user exported the “All Accounts – EMEA” report (1,840 contacts with names, business emails and deal values) to CSV. The export permission sat in the general sales role. It was the only bulk export the account made in six months.",
+          "notes": "Export size 1,840 rows. Role review: export enabled for all 61 sales users. No scheduled exports. Audit trail retention was due to roll the entry off on 9 March; legal hold placed on 17 Feb.",
+          "evidenceIds": [
+            "e04"
+          ],
+          "editedAt": "2026-02-19T12:30:00.000Z",
+          "addedBy": "Priya S",
+          "addedByColor": "#7b5ea7",
+          "addedAt": "2026-02-19T12:30:00.000Z"
+        },
+        {
+          "id": "h04",
+          "host": "DLP / web proxy",
+          "analyst": "Marcus O",
+          "status": "Complete",
+          "summary": "The DLP/proxy captured the upload. A 3.8 GB transfer to an uncategorised personal cloud storage domain began at 07:55 on 17 February from the VPN-authenticated laptop session, using an rclone user-agent. The alert fired at 08:10 once the volume threshold was passed. Policy for the category was monitor-only, so the upload completed.",
+          "notes": "Session start 07:55, ended 08:36. Client egress 203.0.113.88 (residential ISP). Same domain seen once on 16 Feb at 22:40 (test upload of 40 KB). Category: uncategorised → monitor. Confirmed no other users contacted the domain in 30 days.",
+          "evidenceIds": [
+            "e01"
+          ],
+          "editedAt": "2026-02-19T13:30:00.000Z",
+          "addedBy": "Marcus O",
+          "addedByColor": "#c2591b",
+          "addedAt": "2026-02-19T13:30:00.000Z"
+        },
+        {
+          "id": "h05",
+          "host": "Exchange Online (mailbox)",
+          "analyst": "Dan H",
+          "status": "Complete",
+          "summary": "Three emails carrying pricing attachments were forwarded to a personal address on 10 February at 21:18. No mail rule was created and no further forwarding occurred. This is the earliest outbound movement of company data linked to this case.",
+          "notes": "Message trace + item export. Attachments hash-match files in SharePoint (Q1_Pricing_Master_v7.xlsx and two price-book PDFs). Forwarded manually, not via rule. Mailbox audit shows no deletions.",
+          "evidenceIds": [
+            "e06",
+            "e07"
+          ],
+          "editedAt": "2026-02-19T14:30:00.000Z",
+          "addedBy": "Dan H",
+          "addedByColor": "#0f8b8d",
+          "addedAt": "2026-02-19T14:30:00.000Z"
+        }
+      ],
+      "closure": {
+        "checks": {
+          "cl1": true,
+          "cl2": true,
+          "cl3": true,
+          "cl4": true,
+          "cl5": true,
+          "cl6": true,
+          "cl7": true,
+          "cl8": true,
+          "cl9": true,
+          "cl10": true,
+          "cl11": true,
+          "cl12": true,
+          "cl13": true,
+          "cl14": true,
+          "cl15": true,
+          "cl16": true,
+          "cl17": true,
+          "cl18": true,
+          "cl19": true,
+          "cl20": true,
+          "cl21": true,
+          "cl22": true
+        },
+        "notes": "Containment, evidence handling, data recovery, undertaking and notifications complete. Art. 33 decision recorded. Remediation (cloud block, CRM export restriction, leaver feed) deployed. Closed by IR lead with CISO sign-off."
+      },
+      "lessons": {
+        "sessionDate": "2026-03-04",
+        "facilitator": "Dan H (Head of IR)",
+        "attendees": "Dan H, Priya S, Marcus O, Helena Marsh (CISO), Eleanor Voss (Legal), Raj Patel (DPO), HR Director",
+        "well": "DLP raised the alert the same morning and the response was fast: account suspended within three hours and the laptop live-triaged the same day. HR and Legal were engaged before any contact with the employee, which kept the evidence and the process clean. Image hashes matched the recovered USB archive, which made the undertaking enforceable.",
+        "better": "Detection came after the data had left. The signs began on 9 February and the resignation was known on 2 February. Monitor-only policy, wide CRM export rights and open USB access made the theft easy and quiet. HR did not feed the leaver into any security process.",
+        "detect": "Alert on bulk SharePoint downloads over a baseline; alert on any CRM export by a leaver-watch-list user; alert on portable rclone and CCleaner on managed endpoints; keep USB device-insert alerts for leavers.",
+        "playbook": "Add an insider-data-theft playbook: HR and Legal first, then silent monitoring or immediate suspension decision, live-response triage before device recovery, preservation requests, and an Art. 33 assessment checkpoint at 24h.",
+        "training": "Manager leaver-risk awareness; analyst refresher on insider-case evidence handling and working under privilege; HR briefing on what Security needs at the point of resignation.",
+        "recs": "1) Block personal cloud storage by default. 2) Restrict CRM export and label the Pricing library. 3) Automate an HR-to-Security leaver feed with enhanced monitoring for the notice period. 4) Make USB storage read-only for standard users. 5) Publish the insider-data-theft playbook and run a tabletop within the quarter."
+      },
+      "exec": {}
+    }
+  },
+  "activeCaseId": "sample-case-insider-006",
+  "activeTab": "dashboard"
+}
